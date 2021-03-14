@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<title>Register</title>
+
+	</head>
+	<body>
+		<form id="registration">
+			<h2>Register</h2>
+			Username
+			<input type="text" id="username"><br>
+			First Name
+			<input type="text" id="fname"><br>
+			Last Name
+			<input type="text" id="lname"><br>
+			Address
+			<input type="text" id="address"><br>
+			Password
+			<input type="text" id="password"><br>
+            <button onclick="sendRegistration()">Submit Registration Info</button>
+		</form>
+    <script>
+        function sendRegistration()
+        {
+            var username = document.getElementById("username").value;
+            var fname = document.getElementById("fname").value;
+            var lname = document.getElementById("name").value;
+            var address = document.getElementById("address").value;
+            var password = document.getElementById("password").value;
+
+						let data = {'username': username,
+							'fname': fname,
+							'lname': lname,
+							'address': address,
+							'password': password};
+
+            fetch('https://demand.team22.sweispring21.tk/api/v1/register', {
+                method:"POST",
+                body: JSON.stringify(data)
+							})
+							.then(result => {
+								console.log(result);
+							});
+        }
+    </script>
+	</body>
+</html>
