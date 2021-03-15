@@ -27,10 +27,10 @@
                 method:"POST",
                 body: JSON.stringify(data)
 							})
-							.then(result => {
-								if (result == 200)
+							.then(response => {
+								console.log(reponse.status);
+								if (response.status == 200)
 								{
-									console.log(result);
 									window.location.replace("./dashboard.html");
 								}
 							});
