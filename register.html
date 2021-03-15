@@ -39,13 +39,13 @@
                 method:"POST",
                 body: JSON.stringify(data)
 							})
-							.then(function(response) {
-								console.log(response.status);
-								if (response.status == 200)
-								{
-									window.location.replace("./login.html");
-								}
-							});
+						.then(function(response) {
+							console.log(response.status);
+							if (response.ok)
+							{
+								window.location.replace("./login.html");
+							}
+						});
         }
     </script>
 	</body>
