@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<title>Login</title>
+
+	</head>
+	<body>
+		<form id="login">
+			<h2>Register</h2>
+			Username
+			<input type="text" id="username"><br>
+			Password
+			<input type="text" id="password"><br>
+    	<button onclick="logIn()">Log in</button>
+		</form>
+    <script>
+        function logIn()
+        {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+						let data = {'username': username,
+							'password': password};
+
+            fetch('https://demand.team22.sweispring21.tk/api/v1/login', {
+                method:"POST",
+                body: JSON.stringify(data)
+							})
+							.then(result => {
+								if (result == 200)
+								{
+									window.location.replace("./dashboard.html");
+								}
+							});
+        }
+    </script>
+	</body>
+</html>
