@@ -37,13 +37,16 @@
 
             fetch('https://demand.team22.sweispring21.tk/api/v1/register', {
                 method:"POST",
+								headers: {
+									'Content-Type': 'application/json'
+								},
                 body: JSON.stringify(data)
 							})
 						.then(function(response) {
 							console.log(response.status);
-							if (response.ok)
+							if (response.status == 201)
 							{
-								window.location.replace("./login.html");
+								window.location.assign("./login.html");
 							}
 						});
         }
