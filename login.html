@@ -3,7 +3,6 @@
 	<head>
 		<meta charset="utf-8"/>
 		<title>Login</title>
-
 	</head>
 	<body>
 		<form id="login">
@@ -25,13 +24,16 @@
 
             fetch('https://demand.team22.sweispring21.tk/api/v1/login', {
                 method:"POST",
+								headers: {
+									'Content-Type': 'application/json'
+								},
                 body: JSON.stringify(data)
 							})
 							.then(function(response) {
-								console.log(reponse.status);
-								if (response.ok)
+								console.log(response.status);
+								if (response.status == 201)
 								{
-									window.location.replace("./dashboard.html");
+									window.location.assign("./dashboard.html");
 								}
 							});
         }
