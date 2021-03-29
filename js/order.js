@@ -24,6 +24,7 @@ $(function () {
             return Promise.reject(response)
         }).then(data => {
             console.log(data)
+            alert("Order Number: " + data["message"])
         }).catch(error => {
             // Handle error here
         })
