@@ -3,15 +3,13 @@ $(function () {
         let originLocation = $("#origin").val();
         let destinationLocation = $("#destination").val();
 
-        let cloud = window.location.hostname.split('.')[0]
-
         let data = {
-            'cloud': cloud,
+            'cloud': 'demand',
             'originLocation': originLocation,
             'destinationLocation': destinationLocation
         };
 
-        fetch(`https://${cloud}.team22.sweispring21.tk/api/v1/demand/order`, {
+        fetch("https://demand.team22.sweispring21.tk/api/v1/demand/order", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -23,9 +21,10 @@ $(function () {
             }
             return Promise.reject(response)
         }).then(data => {
-            window.alert("Order number: " + data["message"])
+            console.log(data);
+            alert("Order data: " + data["message"]);
         }).catch(error => {
             // Handle error here
         });
-    })
+    });
 })
