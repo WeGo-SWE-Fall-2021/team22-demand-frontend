@@ -7,11 +7,11 @@ $(function () {
 
         let data = {
             'cloud': cloud,
-            'originLocation': originLocation
+            'originLocation': originLocation,
             'destinationLocation': destinationLocation
         };
 
-        fetch(`https://${cloud}.team22.sweispring21.tk/api/v1/common-services/order`, {
+        fetch(`https://${cloud}.team22.sweispring21.tk/api/v1/demand/order`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -19,8 +19,13 @@ $(function () {
             body: JSON.stringify(data)
         }).then(response => {
             if (response.ok) {
-                var result = response.json();
-                print (result.message)
+                return response.json();
             }
+            return Promise.reject(response)
+        }).then(data => {
+            console.log(data)
+        }).catch(error => {
+            // Handle error here
+        })
     })
 })
