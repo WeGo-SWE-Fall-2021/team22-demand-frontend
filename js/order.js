@@ -23,9 +23,9 @@ $(function () {
             }
             return Promise.reject(response)
         }).then(data => {
-            console.log(data)
+            window.alert("Order number: " + data["message"])
         }).catch(error => {
             // Handle error here
-        })
+        });
     })
 })
