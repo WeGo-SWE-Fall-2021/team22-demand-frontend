@@ -4,3 +4,6 @@ This is the demand's front end that TaaS users see when they access `demand.team
 
 - dashboard.html
   * When a user is logged in, they will see their orders, and be able to view plugins.
+  
+- order.html
+  * When A user would like to create an order
