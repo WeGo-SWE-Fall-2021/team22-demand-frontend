@@ -19,6 +19,7 @@ $(() => {
             "cloud": cloud
         }
         fetch(cloudURL + "/api/v1/common-services/logout", {
+            method:"POST",
             headers: {
                 "Content-Type": "application/json"
             },
