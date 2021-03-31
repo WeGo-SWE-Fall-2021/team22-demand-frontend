@@ -1,5 +1,6 @@
 $(() => {
-    let cloudURL = "https://demand.team22.sweispring21.tk"
+    let cloud = window.location.hostname.split('.')[0]
+    let cloudURL = `https://${cloud}.team22.sweispring21.tk`
 
     // Handle user data if there is someone is logged in, else redirect them to login page
 
@@ -14,10 +15,14 @@ $(() => {
 
     // If a user clicks on the logout button, cookies will be empty and will be taken to main page
     $('#logoutButton').click(() => {
+        let data = {
+            "cloud": cloud
+        }
         fetch(cloudURL + "/api/v1/common-services/logout", {
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            body: JSON.stringify(data)
         }).then(response => {
             if (response.ok) {
                 return response.json();
