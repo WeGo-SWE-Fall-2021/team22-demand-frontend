@@ -1,0 +1,14 @@
+#  CI/CD Implementation
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Deploy to Demand Cloud
+          script:
+            - pipe: atlassian/ssh-run:0.3.0
+              variables:
+                SSH_USER: $USER
+                SERVER: $DEMAND_SERVER
+                MODE: "command"
+                COMMAND: "/home/team22/webhooks/team22-redeploy.sh ${BITBUCKET_REPO_SLUG}"
