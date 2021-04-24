@@ -3,12 +3,10 @@
 pipelines:
   branches:
     master:
-      - step:
-          name: Deploy to Demand Cloud
-          script:
-            - pipe: atlassian/ssh-run:0.3.0
-              variables:
-                SSH_USER: $USER
-                SERVER: $DEMAND_SERVER
-                MODE: "command"
-                COMMAND: "/home/team22/webhooks/team22-redeploy.sh ${BITBUCKET_REPO_SLUG}"
+        - step:
+            name: Deploy to Demand Cloud Production
+            deployment: production-demand
+            clone:
+              enabled: false
+            script:
+              - ssh -A -tt -i /opt/atlassian/pipelines/agent/ssh/id_rsa -o 'StrictHostKeyChecking=no' -p ${PORT:-22} $USER@$DEMAND_SERVER "bash -c '/home/team22/webhooks/team22-redeploy.sh ${BITBUCKET_REPO_SLUG} ${BITBUCKET_COMMIT}'"
