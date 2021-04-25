@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 	<head>
-		<meta charset="UTF-8">
-		<title>We-Go Order</title>
+		<meta charset="utf-8">
+		<title>Use the geocoder without a map</title>
 		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
 		<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
@@ -13,12 +13,9 @@
 			#map { position: absolute; top: 0; bottom: 0; width: 100%; }
 		</style>
 
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<!--	Local Javascript	-->
-		<script src="js/order.js"></script>
-		<script src="jquery.js"></script>
 	</head>
 	<body>
+
 		<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
 		<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css">
 		<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
@@ -37,16 +34,8 @@
 			}
 		</style>
 
-		<h2>Order</h2>
-		Order Pickup Location
-		<input type="text" id="origin"><br>
-		Order Destination Location
-
-
-		<div id="includedContent"></div>
-		<div id="geocoder"></div>
-		<button id="orderButton">Place Order</button>
-		<pre id="result"></pre>
+			<div id="geocoder"></div>
+			<pre id="result"></pre>
 
 		<script src="js/geocoder.js"> </script>
 	</body>
