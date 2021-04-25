@@ -1,8 +1,8 @@
 $(function () {
     $("#orderButton").click(() => {
         let originLocation = $("#origin").val();
-        let destinationLocation = $("#destination").val();
-
+        let destinationLocation = order_destination;
+        console.log(destinationLocation);
         let cloud = window.location.hostname.split('.')[0]
 
         let data = {
