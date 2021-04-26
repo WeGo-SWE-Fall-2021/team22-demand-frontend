@@ -1,53 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>We-Go Order</title>
-		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
-		<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
-		<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+<head>
+	<meta charset="UTF-8">
+	<title>We-Go Order</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
-		<style>
-			body { margin: 0; padding: 0; }
-			#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-		</style>
+	<!--	Remote Style Sheets		-->
+	<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
+		type="text/css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
 
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<!--	Local Javascript	-->
-		<script src="js/order.js"></script>
-		<script src="jquery.js"></script>
-	</head>
-	<body>
-		<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
-		<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css">
-		<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
-		<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+	<!-- Local CSS files-->
+	<link href="css/common.css" rel="stylesheet" />
+	<link href="css/order.css" rel="stylesheet" />
 
-		<style>
-			#geocoder
-			{
-				z-index: 1;
-				margin: 10px;
-			}
-			.mapboxgl-ctrl-geocoder
-			{
-				min-width: 100%;
-			}
-		</style>
+	<!-- Local Common Services CSS files -->
+	<link href="../common/css/common.css" rel="stylesheet" />
 
-		<h2>Order</h2>
-		Order Pickup Location
-		<input type="text" id="origin"><br>
-		Order Destination Location
+	<!-- Remote Javascript -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+		crossorigin="anonymous"></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script
+		src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+	<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
+	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 
+	<!-- Local Common Services JS files-->
+	<script src="../common/js/fetchLoggedInUser.js"></script>
+	<script src="../common/js/logoutUser.js"></script>
 
-		<div id="includedContent"></div>
-		<div id="geocoder"></div>
-		<button id="orderButton">Place Order</button>
-		<pre id="result"></pre>
+	<!--	Local Javascript	-->
+	<script src="js/order.js"></script>
+	<script src="js/common.js"></script>
+</head>
 
-		<script src="js/geocoder.js"> </script>
-	</body>
+<body class="m-0 h-100">
+	<!-- Navigation Bar -->
+	<header class="p-3 fixed-top bg-white">
+		<div id="mainAlert" class="alert alert-danger d-none alert-height" role="alert">
+			An error has occurred.
+		</div>
+		<div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+			<a class="navbar-brand-text text-primary text-decoration-none" href="index.html">WeGo</a>
+			<nav id="navbar" class="navbar">
+				<ul>
+					<li id="usernameList" class="nav-item dropdown logged-in-user">
+						<a class="nav-link dropdown-toggle px-3 py-2 text-dark" href="#" id="usernameLabel"
+							role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Username
+						</a>
+						<div class="dropdown-menu" aria-labelledby="usernameLabel">
+							<a class="pe-4 dropdown-item" href="#">Account</a>
+							<a class="pe-4 dropdown-item" href="orders.html">Orders</a>
+						</div>
+					</li>
+					<li class="nav-item mx-3">
+						<button id="logoutButton" class="w-100 nav-item btn color-primary px-3 py-2 text-light"
+							style="text-align: left!important;">Log out</button>
+					</li>
+				</ul>
+				<i id="mobile-nav-toggle" class="bi text-secondary mobile-nav-toggle bi-list"></i>
+			</nav>
+		</div>
+	</header>
+
+	<main id="main" class="d-flex justify-content-center align-items-center min-vh-100 nav-height-padding">
+		<div class="container">
+			<div class="card shadow-lg p-3 bg-white card-rounded">
+				<div class="card-body p-5">
+					<div class="row mb-2">
+						<div class="col-sm">
+							<h2 id="orderTitle" class="mb-4">Plugin Order</h2>
+						</div>
+						<div class="col-1 px-1">
+							<div id="spinner" class="d-none spinner-border text-primary" role="status">
+								<span class="sr-only"></span>
+							</div>					  
+						</div>
+					</div>
+					<h5 class="mb-3">Delivery Address</h5>
+					<div class="row mb-2">
+						<div class="col-sm">
+							<label class="col-form-label-sm" for="firstName">First Name</label>
+							<input type="text" class="form-control" id="firstName" disabled>
+						</div>
+						<div class="col-sm">
+							<label class="col-form-label-sm" for="lastName">Last Name</label>
+							<input type="text" class="form-control" id="lastName" disabled>
+						</div>
+					</div>
+					<div class="col-12 mb-2">
+						<label class="col-form-label-sm" for="phoneNumber">Phone Number</label>
+						<input type="text" class="form-control" id="phoneNumber" disabled>
+					</div>
+					<div class="col-12 mb-2">
+						<label class="col-form-label-sm" for="email">Email</label>
+						<input type="email" class="form-control" id="email" disabled>
+						<div class="invalid-feedback">
+							Make sure street address is not empty.
+						</div>
+					</div>
+					<div class="col-12 mb-2">
+						<label class="col-form-label-sm" for="streetAddress">Street Address</label>
+						<div id="geocoder"></div>
+						<!-- <input type="text" class="form-control" id="streetAddress" required> -->
+						<div class="invalid-feedback">
+							Make sure street address is not empty.
+						</div>
+					</div>
+					<div class="col-12 mb-2">
+						<label class="col-form-label-sm" for="city">City</label>
+						<input type="text" class="form-control" id="city" required>
+						<div class="invalid-feedback">
+							Make sure city is not empty.
+						</div>
+					</div>
+					<div class="row mb-2">
+						<div class="col-sm">
+							<label class="col-form-label-sm" for="state">State</label>
+							<input type="text" class="form-control" id="state" required>
+							<div class="invalid-feedback">
+								Make sure state is not empty.
+							</div>
+						</div>
+						<div class="col-sm">
+							<label class="col-form-label-sm" for="zipCode">Zip Code</label>
+							<input type="text" class="form-control" id="zipCode" required>
+							<div class="invalid-feedback">
+								Make sure zip code is not empty.
+							</div>
+						</div>
+					</div>
+					<hr class="my-4">
+					<h5 class="mb-3">Payment</h5>
+					<div class="form-check">
+						<input class="form-check-input" type="radio" name="flexRadioDefault" id="creditCardRadio">
+						<label class="form-check-label" for="creditCardRadio">
+							Credit Card
+						</label>
+					</div>
+					<div class="form-check pb-2">
+						<input class="form-check-input" type="radio" name="flexRadioDefault" id="debitCardRadio">
+						<label class="form-check-label" for="debitCardRadio">
+							Debit Card
+						</label>
+					</div>
+					<div class="col-12 mb-2">
+						<label class="col-form-label-sm" for="cardholderName">Cardholder's Name</label>
+						<input type="text" class="form-control" id="cardholderName">
+					</div>
+					<div class="col-12 mb-2">
+						<label class="col-form-label-sm" for="cardNumber">Card Number</label>
+						<input type="text" class="form-control" id="cardNumber">
+					</div>
+					<div class="row mb-2">
+						<div class="col-sm">
+							<label class="col-form-label-sm" for="expiration">Expiration</label>
+							<input type="text" class="form-control" id="expiration">
+						</div>
+						<div class="col-sm">
+							<label class="col-form-label-sm" for="cvv">CVV</label>
+							<input type="text" class="form-control" id="cvv">
+						</div>
+					</div>
+					<hr class="my-4">
+					<button id="orderButton" class="w-100 btn btn-primary btn-lg">Submit Order</button>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+
 </html>

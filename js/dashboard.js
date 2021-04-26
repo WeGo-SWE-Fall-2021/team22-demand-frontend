@@ -8,21 +8,22 @@ $(() => {
     fetchLoggedInUser(cloud).then(response => {
         // Success getting user
         if (response.status == 200) {
-            $("#usernameLabel").text(response.body["username"]);
-            fetchPlugins();
+            $("#usernameLabel").text(response.body.user.username);
         } else {
             console.log("Was unable to get user using cookies.")
-            // Failed to get user with token
-            // window.location.replace(cloudURL)
+            // Failed to get user with token, route them back to login
+            window.location.replace(cloudURL + '/login.html')
         }
     }).catch(error => {
         // Error fetching
         console.error("Error fetching: " + error)
         showAlert("There was an error getting information.")
     });
+
+    fetchPlugins();
 });
 
-function fetchPlugins() {
+async function fetchPlugins() {
     fetch("https://demand.team22.sweispring21.tk/api/v1/demand/plugins?name=all", {
         method: "GET",
         headers: {
@@ -35,14 +36,18 @@ function fetchPlugins() {
         return Promise.reject(response)
     }).then(json => {
         for (const plugin of json.plugins) {
-            let name = plugin.name.toLowerCase();
+            let name = plugin.name.toLowerCase().replace('_', ' ');
             let available = plugin.available;
-            let pluginName = name.charAt(0).toUpperCase() + name + " Delivery"
+            let pluginName = name.charAt(0).toUpperCase() + name.slice(1) + " Delivery";
+            let buttonText = available ? "Order now!" : "Unavailable";
+            let buttonStyle = available ? 'btn-primary' : 'btn-secondary'
+            let disableClicking = available ? '' : 'disabled'
+            let buttonLink = available ? 'order.html?name=' + plugin.name : ''
             var element =   `<div class="card col p-2 plugin-card">
                                 <img src="" class="card-img-top" alt="...">'
                                 <div class="card-body">
                                     <h5 class="card-title">${pluginName}</h5>
-                                    <a href="#" class="btn btn-primary w-100">Order now!</a>
+                                    <a href="${buttonLink}" class="btn ${buttonStyle} w-100" ${disableClicking}>${buttonText}</a>
                                 </div> 
                             </div>`
             $("#pluginsContainer > div").append(element)
@@ -62,10 +67,3 @@ function hideAlert(text) {
     $("#main").addClass('nav-height-padding').removeClass('alert-height-with-nav-padding');
     $("#mainAlert").removeClass('d-none').text(text);
 }
-
-// Logout button
-$(() => {
-    $("#logoutButton").click(() => {
-        logoutUser();
-    });
-});

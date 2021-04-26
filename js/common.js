@@ -43,4 +43,10 @@ $(() => {
             $('#navbar').removeClass('navbar-mobile');
         }
     });
-})
+});
+
+$(() => {
+    $("#logoutButton").click(() => {
+        logoutUser();
+    });
+});
