@@ -13,7 +13,7 @@ $(() => {
     // Check if uri has valid parameters
     if (pluginName == '' || pluginName == null) {
         // Redirect to dashboard because order plugin is invalid
-        window.location.replace(cloudURL + '/demand-front-end/dashboard.html');
+        window.location.replace(cloudURL + '/demand-frontend/dashboard.html');
     } else {
         let name = pluginName.toLowerCase().replace('_', " ");
         name = name.charAt(0).toUpperCase() + name.slice(1) + " Order";
@@ -26,10 +26,10 @@ $(() => {
         // Success getting user
         if (response.status == 200) {
             $("#usernameLabel").text(response.body.user.username);
-            $('#firstName').text(response.body.user.firstName);
-            $('#lastName').text(response.body.user.lastName);
-            $('#phoneNumber').text(response.body.user.phoneNumber);
-            $('#email').text(response.body.user.email);
+            $('#firstName').val(response.body.user.firstName);
+            $('#lastName').val(response.body.user.lastName);
+            $('#phoneNumber').val(response.body.user.phoneNumber);
+            $('#email').val(response.body.user.email);
         } else {
             console.log("Was unable to get user using cookies.")
             // Failed to get user with token, route them back to login
@@ -67,29 +67,40 @@ async function fetchPlugin(name) {
 // Button on click handler
 $(() => {
     $("#orderButton").click(() => {
-        showSpinner();
-        let cardType = $('#creditCardRadio').val() ? "CREDIT_CARD" : "DEBIT_CARD"
-        let streetAddress = $('.mapboxgl-ctrl-geocoder--input').val();
+        $('#orderButtonSpinner').removeClass('d-none');
+        $(this).prop('disabled', true).text("Submitting Order...")
+
+        $('.card-body').addClass('was-validated');
+		let errorVisible = $('.invalid-feedback:visible').length
+		if (errorVisible !== 0) {
+			console.log("There are currently errors in validation. User needs to fix those errors before proceeding.")
+            $('#orderButtonSpinner').addClass('d-none');
+            $(this).prop('disabled', false).text("Submit Order")    
+            return
+		}
+
+        let cardType = $('#creditCardRadio').val() ? "CREDIT" : "DEBIT"
+        let streetAddress = $('#streetAddress').val();
         let city = $('#city').val();
         let state = $('#state').val();
         let zipCode = $('#zipCode').val();
-        let completeAddress = `${streetAddress} ${city} ${state} ${zipCode}`;
+        let completeAddress = `${streetAddress}, ${city}, ${state} ${zipCode}, United States`;
+
 
         if (city == "" | state == "" | zipCode == "" | streetAddress == "") {
+            $('#orderButton').prop('disabled', false).text("Submit Order");
             console.log("Fields cannot be empty")
-            stopSpinner();
             return;
         }
 
         let data = {
-            'cloud': cloud,
             'paymentType': cardType,
             'plugin': pluginName,
-            'destinationLocation': completeAddress,
+            'orderDestination': completeAddress,
             'items': []
         };
 
-        fetch(`https://demand.team22.sweispring21.tk/api/v1/demand/order`, {
+        fetch("https://demand.team22.sweispring21.tk/api/v1/demand/order", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -102,9 +113,9 @@ $(() => {
             return Promise.reject(response)
         }).then(data => {
             console.log(data)
-            alert("Successfully created order! Tracking Number:" + data.tracking)
+            alert("Successfully created order! Order Id:" + data.orderId);
         }).catch(error => {
-            stopSpinner();
+            $('#orderButton').prop('disabled', false).text("Submit Order");
             // Handle error here
             console.error("There was an error with sending order: " + error);
             showAlert("There was an error sending order: " + error);
@@ -116,15 +127,22 @@ $(() => {
 $(() => {
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
+        countries: 'us',
         types: 'address'
     });
 
     geocoder.addTo('#geocoder');
 
+    // Style search input
+    $(".mapboxgl-ctrl-geocoder--input").addClass("form-control").removeClass('mapboxgl-ctrl-geocoder--input').attr('id', 'streetAddress');
+    $('.mapboxgl-ctrl-geocoder--icon-search').addClass('d-none');
+    let newIcon = $('<span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>');
+    $('.mapboxgl-ctrl-geocoder').addClass('input-group').prepend(newIcon)
+
     geocoder.on('result', function (data) {
         const result = data.result;
         let address = result.address + " " + result.text
-        $('.mapboxgl-ctrl-geocoder--input').val(address);
+        $('#streetAddress').val(address);
         let context = result.context
         for (var i = 0; i < context.length; i++) {
             let property = context[i];
@@ -146,14 +164,6 @@ $(() => {
         $('#zipCode').val("");
     });
 });
-
-function showSpinner() {
-    $("#spinner").removeClass('d-none');
-}
-
-function hideSpinner() {
-    $("#spinner").addClass('d-none');
-}
 
 function showAlert(text) {
     $("#main").removeClass('nav-height-padding').addClass('alert-height-with-nav-padding');

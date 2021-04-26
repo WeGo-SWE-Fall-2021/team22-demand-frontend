@@ -77,16 +77,7 @@
 		<div class="container">
 			<div class="card shadow-lg p-3 bg-white card-rounded">
 				<div class="card-body p-5">
-					<div class="row mb-2">
-						<div class="col-sm">
-							<h2 id="orderTitle" class="mb-4">Plugin Order</h2>
-						</div>
-						<div class="col-1 px-1">
-							<div id="spinner" class="d-none spinner-border text-primary" role="status">
-								<span class="sr-only"></span>
-							</div>					  
-						</div>
-					</div>
+					<h2 id="orderTitle" class="mb-4">Plugin Order</h2>
 					<h5 class="mb-3">Delivery Address</h5>
 					<div class="row mb-2">
 						<div class="col-sm">
@@ -105,14 +96,10 @@
 					<div class="col-12 mb-2">
 						<label class="col-form-label-sm" for="email">Email</label>
 						<input type="email" class="form-control" id="email" disabled>
-						<div class="invalid-feedback">
-							Make sure street address is not empty.
-						</div>
 					</div>
 					<div class="col-12 mb-2">
 						<label class="col-form-label-sm" for="streetAddress">Street Address</label>
 						<div id="geocoder"></div>
-						<!-- <input type="text" class="form-control" id="streetAddress" required> -->
 						<div class="invalid-feedback">
 							Make sure street address is not empty.
 						</div>
@@ -143,7 +130,7 @@
 					<hr class="my-4">
 					<h5 class="mb-3">Payment</h5>
 					<div class="form-check">
-						<input class="form-check-input" type="radio" name="flexRadioDefault" id="creditCardRadio">
+						<input class="form-check-input" checked type="radio" name="flexRadioDefault" id="creditCardRadio">
 						<label class="form-check-label" for="creditCardRadio">
 							Credit Card
 						</label>
@@ -156,24 +143,36 @@
 					</div>
 					<div class="col-12 mb-2">
 						<label class="col-form-label-sm" for="cardholderName">Cardholder's Name</label>
-						<input type="text" class="form-control" id="cardholderName">
+						<input type="text" class="form-control" id="cardholderName" required>
+						<div class="invalid-feedback">
+							Make sure cardholder's name is not empty.
+						</div>
 					</div>
 					<div class="col-12 mb-2">
 						<label class="col-form-label-sm" for="cardNumber">Card Number</label>
-						<input type="text" class="form-control" id="cardNumber">
+						<input type="number" class="form-control" id="cardNumber" required>
+						<div class="invalid-feedback">
+							Make sure card number is not empty and valid.
+						</div>
 					</div>
 					<div class="row mb-2">
 						<div class="col-sm">
 							<label class="col-form-label-sm" for="expiration">Expiration</label>
-							<input type="text" class="form-control" id="expiration">
+							<input type="month" class="form-control" id="expiration" required>
 						</div>
 						<div class="col-sm">
 							<label class="col-form-label-sm" for="cvv">CVV</label>
-							<input type="text" class="form-control" id="cvv">
+							<input type="number" class="form-control" id="cvv" required>
+							<div class="invalid-feedback">
+								Make sure cvv is not empty.
+							</div>	
 						</div>
 					</div>
 					<hr class="my-4">
-					<button id="orderButton" class="w-100 btn btn-primary btn-lg">Submit Order</button>
+					<button id="orderButton" type="submit" class="w-100 btn btn-primary btn-lg">
+						<span id="orderButtonSpinner" role="status" aria-hidden="true" class="d-none spinner-border spinner-border-sm align-middle" role="status" aria-hidden="true"></span>
+						Submit Order
+					</button>
 				</div>
 			</div>
 		</div>
