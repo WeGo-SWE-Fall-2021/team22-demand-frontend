@@ -1,4 +1,9 @@
-/* Main */
-main {
-    margin-top: 84px;
+#pluginContainer {
+    padding: 100px 0;
 }
+
+.plugin-card {
+    width: 18rem;
+    margin: 14px;
+}
+

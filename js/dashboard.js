@@ -2,69 +2,66 @@
 let cloud = window.location.hostname.split('.')[0]
 let cloudURL = `https://${cloud}.team22.sweispring21.tk`
 
-/* Adds shadow on header once it passes height */
-$(window).scroll(() => {
-    let header = $("header")
-    if (window.scrollY > 0) {
-        header.addClass("header-scroll");
-    } else {
-        header.removeClass("header-scroll");
-    }
-});
-
-// If the user resizes and the tab is still shown, we will need to hide it and show the navigation
-$(window).resize(() => {
-    let windowWidth = $(window).width();
-    if (windowWidth > 991) {
-        let navBar = $('#navbar');
-        let hasMobileNavbar = navBar.hasClass('navbar-mobile');
-        if (hasMobileNavbar) {
-            navBar.removeClass('navbar-mobile');
-            let mobileNavToggle = $('#mobile-nav-toggle');
-            mobileNavToggle.removeClass('text-white');
-            mobileNavToggle.addClass('text-secondary');
-            mobileNavToggle.removeClass('bi-x');
-            mobileNavToggle.addClass('bi-list');
-        }
-    }
-});
-
-// Switch from hamburger icon to x icon if pressed
-$(() => {
-    $('#mobile-nav-toggle').click(function () {
-        let hasList = $(this).hasClass('bi-list');
-        if (hasList) {
-            $(this).removeClass('bi-list');
-            $(this).addClass('bi-x');
-            $(this).removeClass('text-secondary');
-            $(this).addClass('text-white');
-            $('#navbar').addClass('navbar-mobile');
-        } else {
-            $(this).removeClass('bi-x');
-            $(this).addClass('bi-list');
-            $(this).removeClass('text-white');
-            $(this).addClass('text-secondary');
-            $('#navbar').removeClass('navbar-mobile');
-        }
-    });
-})
-
 // General main func once documents finished loading
 $(() => {
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
     fetchLoggedInUser(cloud).then(response => {
         // Success getting user
-        if (response.status === 200) {
+        if (response.status == 200) {
+            $("#usernameLabel").text(response.body["username"]);
+            fetchPlugins();
         } else {
+            console.log("Was unable to get user using cookies.")
             // Failed to get user with token
             // window.location.replace(cloudURL)
         }
     }).catch(error => {
         // Error fetching
-        $("#mainAlert").text("There was an error getting information.")
         console.error("Error fetching: " + error)
-    })
-})
+        showAlert("There was an error getting information.")
+    });
+});
+
+function fetchPlugins() {
+    fetch("https://demand.team22.sweispring21.tk/api/v1/demand/plugins?name=all", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response)
+    }).then(json => {
+        for (const plugin of json.plugins) {
+            let name = plugin.name.toLowerCase();
+            let available = plugin.available;
+            let pluginName = name.charAt(0).toUpperCase() + name + " Delivery"
+            var element =   `<div class="card col p-2 plugin-card">
+                                <img src="" class="card-img-top" alt="...">'
+                                <div class="card-body">
+                                    <h5 class="card-title">${pluginName}</h5>
+                                    <a href="#" class="btn btn-primary w-100">Order now!</a>
+                                </div> 
+                            </div>`
+            $("#pluginsContainer > div").append(element)
+        }
+    }).catch(error => {
+        console.error("Error: error fetching plugins.")
+        showAlert("There was an error getting plugins: " + error)
+    });
+}
+
+function showAlert(text) {
+    $("#main").removeClass('nav-height-padding').addClass('alert-height-with-nav-padding');
+    $("#mainAlert").removeClass('d-none').text(text);
+}
+
+function hideAlert(text) {
+    $("#main").addClass('nav-height-padding').removeClass('alert-height-with-nav-padding');
+    $("#mainAlert").removeClass('d-none').text(text);
+}
 
 // Logout button
 $(() => {
