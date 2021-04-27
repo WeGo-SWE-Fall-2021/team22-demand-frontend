@@ -7,7 +7,8 @@ var intervalVehicleUpdate = undefined;
 $(() => {
     var map = new mapboxgl.Map({
         container: 'orderMap', // container id
-        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        style: 'mapbox://styles/mapbox/streets-v11',
+         // style URL
         zoom: 9 // starting zoom
     });
 
@@ -234,6 +235,9 @@ function showNewOrderDetails(order, map) {
                 .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
                     .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
                 .addTo(map);
+        });
+        map.flyTo({
+            center: adjust_coordinate(order.vehicleLocation)
         });
         map.addControl(new mapboxgl.NavigationControl());
         $('#orderMap').removeClass('d-none')
