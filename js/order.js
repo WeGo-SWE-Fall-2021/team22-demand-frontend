@@ -6,14 +6,12 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const pluginName = urlParams.get('name');
 
-mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
-
 // General main func once documents finished loading
 $(() => {
     // Check if uri has valid parameters
     if (pluginName == '' || pluginName == null) {
         // Redirect to dashboard because order plugin is invalid
-        window.location.replace(cloudURL + '/demand-frontend/dashboard.html');
+        window.location.replace(cloudURL + '/dashboard.html');
     } else {
         let name = pluginName.toLowerCase().replace('_', " ");
         name = name.charAt(0).toUpperCase() + name.slice(1) + " Order";
@@ -164,14 +162,3 @@ $(() => {
         $('#zipCode').val("");
     });
 });
-
-function showAlert(text) {
-    $("#main").removeClass('nav-height-padding').addClass('alert-height-with-nav-padding');
-    $("#mainAlert").removeClass('d-none').text(text);
-}
-
-function hideAlert(text) {
-    $("#main").addClass('nav-height-padding').removeClass('alert-height-with-nav-padding');
-    $("#mainAlert").removeClass('d-none').text(text);
-}
-

@@ -1,3 +1,5 @@
+mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
+
 /* Adds shadow on header once it passes height */
 $(window).scroll(() => {
     let header = $("header")
@@ -50,3 +52,13 @@ $(() => {
         logoutUser();
     });
 });
+
+function showAlert(text) {
+    $("#main").removeClass('nav-height-padding').addClass('alert-height-with-nav-padding');
+    $("#mainAlert").removeClass('d-none').text(text);
+}
+
+function hideAlert() {
+    $("#main").addClass('nav-height-padding').removeClass('alert-height-with-nav-padding');
+    $("#mainAlert").addClass('d-none');
+}

@@ -5,14 +5,11 @@
 	<title>We-Go Orders</title>
 	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 
-	<!--	Remote Style Sheets		-->
-	<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
-	<link rel="stylesheet"
-		href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css"
-		type="text/css">
+	<!--	Remote Style Sheets	`````````7ui	-->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+	<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
 
 	<!-- Local CSS files-->
 	<link href="css/common.css" rel="stylesheet" />
@@ -25,13 +22,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
 		crossorigin="anonymous"></script>
-	<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script
-		src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
-	<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
-	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
 
 	<!-- Local Common Services JS files-->
 	<script src="../common/js/fetchLoggedInUser.js"></script>
@@ -40,17 +32,16 @@
 	<!--	Local Javascript	-->
 	<script src="js/orders.js"></script>
 	<script src="js/common.js"></script>
-	<script src="js/geocoder.js"> </script>
 </head>
 
-<body class="m-0 h-100">
+<body class="m-0">
 	<!-- Navigation Bar -->
 	<header class="p-3 fixed-top bg-white">
 		<div id="mainAlert" class="alert alert-danger d-none alert-height" role="alert">
 			An error has occurred.
 		</div>
 		<div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-			<a class="navbar-brand-text text-primary text-decoration-none" href="index.html">WeGo</a>
+			<a class="navbar-brand-text text-primary text-decoration-none" href="/index.html">WeGo</a>
 			<nav id="navbar" class="navbar">
 				<ul>
 					<li id="usernameList" class="nav-item dropdown logged-in-user">
@@ -59,6 +50,7 @@
 							Username
 						</a>
 						<div class="dropdown-menu" aria-labelledby="usernameLabel">
+							<a class="pe-4 dropdown-item" href="dashboard.html">Dashboard</a>
 							<a class="pe-4 dropdown-item" href="#">Account</a>
 							<a class="pe-4 dropdown-item" href="orders.html">Orders</a>
 						</div>
@@ -73,8 +65,78 @@
 		</div>
 	</header>
 
-	<main id="main" class="d-flex justify-content-center align-items-center min-vh-100 nav-height-padding">
-		<div class="container py-2">
+	<main id="main" class="nav-height-padding">
+		<div class="container p-4">
+			<h2 class="pb-3"><strong>My Orders</strong></h2>
+			<div class="row">
+				<div class="col-lg-auto">
+					<table id="ordersTable" class="table">
+						<thead>
+							<tr>
+								<th class="fw-bolder text-muted" scope="col">#</th>
+								<th class="fw-bolder text-muted" scope="col">Date</th>
+								<th class="fw-bolder text-muted" scope="col">Name</th>
+								<th class="fw-bolder text-muted" scope="col">Status</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+				<div class="col">
+					<div id="orderDetails" class="card shadow-lg p-5 bg-white card-rounded">
+						<div class="row">
+							<div class="col d-inline text-muted text-end">
+								<h6 class="d-inline">
+									<small>Order # </small>
+								</h6>
+								<h6 id="orderId" class="d-inline">
+									<small>ORDER_ID</small>
+								</h6>
+							</div>
+						</div>
+						<div class="row">
+							<div class="pb-4">
+								<h3 id="orderName">Plugin Name</h3>	
+							</div>
+						</div>
+						<div class="row">
+							<div class="d-inline pb-1 d-none">
+								<h6 class="d-inline">Items: </h6>	
+								<h6 class="text-muted" id="items">None</h6>	
+							</div>
+						</div>
+						<div class="row">
+							<div class="pb-1">
+								<h6>Shipping Address: </h6>
+								<h6 id="shippingAddress" class="text-muted"><small>Error</small></h6>		
+							</div>
+						</div>
+						<div class="row">
+							<div class="d-inline pb-1">
+								<h6 class="d-inline">Payment Type: </h6>	
+								<h6 class="d-inline text-muted" id="paymentType"><small>Error</h6>	
+							</div>
+						</div>
+						<div class="row">
+							<div class="d-inline pb-1">
+								<h6 class="d-inline">Status: </h6>	
+								<h6 class="d-inline text-muted" id="status"><small>Error</small></h6>	
+							</div>
+						</div>
+						<div class="row">
+							<div class="d-inlined-none">
+								<h6 class="d-inline">Estimated Delivery: </h6>	
+								<h6 class="d-inline text-muted" id="eta"><small>Error</small></h6>	
+							</div>
+						</div>
+						<div class="pb-4"><!-- Space --></div>
+						<div class="row">
+							<div id="orderMap" class="col card-rounded"></div>	
+						</div>
+					</div>	
+				</div>
+			</div>
 		</div>
 	</main>
 </body>

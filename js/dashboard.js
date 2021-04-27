@@ -57,13 +57,3 @@ async function fetchPlugins() {
         showAlert("There was an error getting plugins: " + error)
     });
 }
-
-function showAlert(text) {
-    $("#main").removeClass('nav-height-padding').addClass('alert-height-with-nav-padding');
-    $("#mainAlert").removeClass('d-none').text(text);
-}
-
-function hideAlert(text) {
-    $("#main").addClass('nav-height-padding').removeClass('alert-height-with-nav-padding');
-    $("#mainAlert").removeClass('d-none').text(text);
-}
