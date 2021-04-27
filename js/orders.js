@@ -170,9 +170,9 @@ function updateOrderDetails(orderIdClicked) {
             });
 
             if (map.loaded()) {
-                loadVehicleRoute(map, order.vehicleLocation, order.geometry)
+                loadVehicleRoute(order.vehicleLocation, order.geometry)
             } else {
-                map.on('load', loadVehicleRoute(map, order.vehicleLocation, order.geometry));
+                map.on('load', loadVehicleRoute(order.vehicleLocation, order.geometry));
             }
 
             map.flyTo({
@@ -265,17 +265,18 @@ function loadVehicleRoute(vehicleLocation, geometry) {
                 }]
             }
         });
-    });
 
-    // Add a layer to use the image to represent the data.
-    map.addLayer({
-        'id': 'vehiclePoint',
-        'type': 'symbol',
-        'source': 'vehicleLocation', // reference the data source
-        'layout': {
-            'icon-image': 'vehicle', // reference the image
-            'icon-size': 0.25
-        }
+        // Add a layer to use the image to represent the data.
+
+        map.addLayer({
+            'id': 'vehiclePoint',
+            'type': 'symbol',
+            'source': 'vehicleLocation', // reference the data source
+            'layout': {
+                'icon-image': 'vehicle', // reference the image
+                'icon-size': 0.25
+            }
+        });    
     });
 
     // Add route
