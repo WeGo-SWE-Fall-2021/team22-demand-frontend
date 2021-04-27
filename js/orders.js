@@ -7,8 +7,8 @@ var intervalVehicleUpdate = undefined;
 $(() => {
     var map = new mapboxgl.Map({
         container: 'orderMap', // container id
-        style: 'mapbox://styles/mapbox/streets-v11',
-         // style URL
+        style: 'mapbox://styles/mapbox/streets-v11',// style URL
+        center: [0,0],
         zoom: 9 // starting zoom
     });
 
