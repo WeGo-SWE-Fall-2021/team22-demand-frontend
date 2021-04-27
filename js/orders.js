@@ -84,8 +84,8 @@ function updateOrderDetails(orderIdClicked) {
 
     order = undefined;
     for (var i = 0; i < orders.length; i++) {
-        if (ordr[i].orderId == orderId) {
-            order = ordr;
+        if (orders[i].orderId == orderId) {
+            order = orders[i];
             break
         }
     }
