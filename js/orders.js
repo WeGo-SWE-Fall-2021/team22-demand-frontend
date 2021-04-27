@@ -124,7 +124,7 @@ function updateOrderDetails(orderIdClicked) {
         map.removeSource('route');
     }
 
-    if (map.getSource('vehiclePoint') != undefined) {
+    if (map.getLayer('vehiclePoint') != undefined) {
         map.removeLayer('vehiclePoint');
     }
 
