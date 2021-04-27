@@ -124,12 +124,12 @@ function updateOrderDetails(orderIdClicked) {
         map.removeSource('route');
     }
 
-    if (map.getSource('vehicleLocation') != undefined) {
-        map.removeSource('vehicleLocation');
+    if (map.removeLayer('vehiclePoint') != undefined) {
+        map.removeLayer('vehiclePoint');
     }
 
-    if (map.getSource('vehiclePoint') != undefined) {
-        map.removeLayer('vehiclePoint');
+    if (map.getSource('vehicleLocation') != undefined) {
+        map.removeSource('vehicleLocation');
     }
 
     mapMarkers.forEach((marker) => { marker.remove(); })
@@ -145,16 +145,18 @@ function updateOrderDetails(orderIdClicked) {
                     coordinates: adjust_coordinate(order.destinationCoordinate)
                 },
                 properties: {
-                    title: 'Mapbox',
+                    title: 'WeGo',
                     description: 'Destination Location'
                 }
             }]
         };
 
         if (order.orderStatus == "DELIVERED") {
-            map.flyTo({
-                center: adjust_coordinate(order.orderDestination)
-            });
+            if ($("#orderId").text() == orderId) {
+                map.flyTo({
+                    center: adjust_coordinate(order.destinationCoordinate)
+                });
+            }
             $('#eta').parent().parent().addClass("d-none");
         } else {
             geojson.features.push({
@@ -164,7 +166,7 @@ function updateOrderDetails(orderIdClicked) {
                     coordinates: adjust_coordinate(order.dock)
                 },
                 properties: {
-                    title: 'Mapbox',
+                    title: 'WeGo',
                     description: "Starting Location"
                 }
             });
@@ -175,9 +177,11 @@ function updateOrderDetails(orderIdClicked) {
                 map.on('load', loadVehicleRoute(order.vehicleLocation, order.geometry));
             }
 
-            map.flyTo({
-                center: adjust_coordinate(order.vehicleLocation)
-            });
+            if ($("#orderId").text() == orderId) {
+                map.flyTo({
+                    center: adjust_coordinate(order.vehicleLocation)
+                });
+            }
             $('#orderMap').parent().removeClass('d-none');
             $('#eta').parent().parent().removeClass("d-none");
         }
