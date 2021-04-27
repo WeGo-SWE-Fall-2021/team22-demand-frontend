@@ -116,10 +116,21 @@ function updateOrderDetails(orderIdClicked) {
     }
 
     // Remove route
-    map.removeLayer('route');
-    map.removeSource('route');
-    map.removeSource('vehicleLocation');
-    map.removeLayer('vehiclePoint');
+    if (map.getLayer('route') != undefined) {
+        map.removeLayer('route');
+    }
+
+    if (map.getSource('route') != undefined) {
+        map.removeSource('route');
+    }
+
+    if (map.getSource('vehicleLocation') != undefined) {
+        map.removeSource('vehicleLocation');
+    }
+
+    if (map.getSource('vehiclePoint') != undefined) {
+        map.removeLayer('vehiclePoint');
+    }
 
     mapMarkers.forEach((marker) => { marker.remove(); })
     mapMarkers = []
