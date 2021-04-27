@@ -6,17 +6,17 @@ var intervalVehicleUpdate = undefined;
 var orders = [];
 let mapMarkers = []
 
+let map = new mapboxgl.Map({
+    container: 'orderMap', // container id
+    style: 'mapbox://styles/mapbox/streets-v11',// style URL
+    center: [0, 0],
+    zoom: 9 // starting zoom
+});
+
+map.addControl(new mapboxgl.NavigationControl());
+
 // General main func once documents finished loading
 $(() => {
-    mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
-    var map = new mapboxgl.Map({
-        container: 'orderMap', // container id
-        style: 'mapbox://styles/mapbox/streets-v11',// style URL
-        center: [0, 0],
-        zoom: 9 // starting zoom
-    });
-    map.addControl(new mapboxgl.NavigationControl());
-
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
     fetchLoggedInUser(cloud).then(response => {
         // Success getting user
@@ -231,7 +231,7 @@ function adjust_coordinate(loc) {
     return array_floats;
 }
 
-function loadVehicleRoute(map, vehicleLocation, geometry) {
+function loadVehicleRoute(vehicleLocation, geometry) {
     map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicles-and-cars/110/Vehicles_and_cars_12-512.png', (error, image) => {
         if (error) throw error;
 
