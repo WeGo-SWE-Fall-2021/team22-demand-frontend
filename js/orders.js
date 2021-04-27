@@ -31,30 +31,7 @@ $(() => {
         showAlert("There was an error getting user information.")
     });
 
-    setInterval(() => {
-        $('#spinner').removeClass('d-none');
-        fetch("https://demand.team22.sweispring21.tk/api/v1/demand/orders", {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response)
-        }).then(json => {
-            orders = json.orders;
-            populateTable();
-            updateOrderDetails(undefined);
-            $('#spinner').addClass('d-none');
-        }).catch(err => {
-            orders = [];
-            $('#noOrdersAvailabeText').removeClass('d-none')
-            console.error(err);
-            $('#spinner').addClass('d-none');
-        });
-    }, 5000)
+    fetchOrders();
 
     // Handle click events on table rows
     $("#ordersTable tbody").on("click", "tr", function () {
@@ -65,6 +42,34 @@ $(() => {
         updateOrderDetails(orderId);
     });
 });
+
+function fetchOrders() {
+    $('#spinner').removeClass('d-none');
+    fetch("https://demand.team22.sweispring21.tk/api/v1/demand/orders", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response)
+    }).then(json => {
+        orders = json.orders;
+        populateTable();
+        updateOrderDetails(undefined);
+        $('#spinner').addClass('d-none');
+    }).catch(err => {
+        orders = [];
+        $('#noOrdersAvailabeText').removeClass('d-none')
+        console.error(err);
+        $('#spinner').addClass('d-none');
+    });
+
+    // We should use set Timeout rather than setInterval due to if it takes a while longer to get data, we can wait
+    setTimeout(fetchOrders, 5000);
+}
 
 function updateOrderDetails(orderIdClicked) {
     if (orders == null || orders == {} || orders == undefined) {
@@ -78,8 +83,8 @@ function updateOrderDetails(orderIdClicked) {
     }
 
     order = undefined;
-    for (const ordr in orders) {
-        if (ordr.orderId == orderId) {
+    for (var i = 0; i < orders.length; i++) {
+        if (ordr[i].orderId == orderId) {
             order = ordr;
             break
         }
@@ -210,9 +215,9 @@ function populateTable() {
     });
 
     if (orders.length == 0) {
-        $('#noOrdersAvailabeText').addClass('d-none')
-    } else {
         $('#noOrdersAvailabeText').removeClass('d-none')
+    } else {
+        $('#noOrdersAvailabeText').addClass('d-none')
     }
 }
 
