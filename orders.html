@@ -54,7 +54,7 @@
 							<a class="pe-4 dropdown-item" href="#">Account</a>
 							<a class="pe-4 dropdown-item" href="orders.html">Orders</a>
 						</div>
-					</li>
+					</li>	
 					<li class="nav-item mx-3">
 						<button id="logoutButton" class="w-100 nav-item btn color-primary px-3 py-2 text-light"
 							style="text-align: left!important;">Log out</button>
@@ -67,28 +67,42 @@
 
 	<main id="main" class="nav-height-padding">
 		<div class="container p-4">
-			<h2 class="pb-3"><strong>My Orders</strong></h2>
-			<div class="row">
-				<div class="col-lg-6">
-					<table id="ordersTable" class="table">
-						<thead>
-							<tr>
-								<th class="fw-bolder text-muted" scope="col">#</th>
-								<th class="fw-bolder text-muted" scope="col">Date</th>
-								<th class="fw-bolder text-muted" scope="col">Name</th>
-								<th class="fw-bolder text-muted" scope="col">Status</th>
-							</tr>
-						</thead>
-						<tbody>
-							<td>h</td>
-							<td>h</td>
-							<td>h</td>
-							<td>h</td>
-							<td>h</td>
-						</tbody>
-					</table>
+			<div class="row pb-3">
+				<div class="col">
+					<h2 class="pb-3"><strong>My Orders</strong></h2>
 				</div>
 				<div class="col">
+					<div class="d-flex justify-content-end">
+						<div id="spinner" class="spinner-border text-primary d-none" role="status">
+						</div>	
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<div class="table-responsive">
+						<table id="ordersTable" class="table">
+							<thead>
+								<tr>
+									<th class="fw-bolder text-muted" scope="col">#</th>
+									<th class="fw-bolder text-muted" scope="col">Date</th>
+									<th class="fw-bolder text-muted" scope="col">Name</th>
+									<th class="fw-bolder text-muted" scope="col">Status</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>	
+					</table>
+						</table>	
+					</table>
+						</table>	
+					</div>
+					<div id="noOrdersAvailabeText" class="text-center">
+						<h4>No orders available.</h4>
+					</div>
+				</div>
+				<div class="col-lg-6 d-none">
 					<div id="orderDetails" class="card shadow-lg p-5 bg-white card-rounded">
 						<div class="row">
 							<div class="col d-inline text-muted text-end">
@@ -102,44 +116,44 @@
 						</div>
 						<div class="row">
 							<div class="pb-4">
-								<h3 id="orderName">Plugin Name</h3>	
+								<h3 id="orderName">Plugin Name</h3>
 							</div>
 						</div>
 						<div class="row">
 							<div class="d-inline pb-1 d-none">
-								<h6 class="d-inline">Items: </h6>	
-								<h6 class="text-muted" id="items">None</h6>	
+								<h6 class="d-inline">Order Details: </h6>
+								<h6 class="text-muted" id="items">None</h6>
 							</div>
 						</div>
 						<div class="row">
 							<div class="pb-1">
 								<h6>Shipping Address: </h6>
-								<h6 id="shippingAddress" class="text-muted"><small>Error</small></h6>		
+								<h6 id="shippingAddress" class="text-muted"><small>Error</small></h6>
 							</div>
 						</div>
 						<div class="row">
 							<div class="d-inline pb-1">
-								<h6 class="d-inline">Payment Type: </h6>	
-								<h6 class="d-inline text-muted" id="paymentType"><small>Error</h6>	
+								<h6 class="d-inline">Payment Type: </h6>
+								<h6 class="d-inline text-muted" id="paymentType"><small>Error</h6>
 							</div>
 						</div>
 						<div class="row">
 							<div class="d-inline pb-1">
-								<h6 class="d-inline">Status: </h6>	
-								<h6 class="d-inline text-muted" id="status"><small>Error</small></h6>	
+								<h6 class="d-inline">Status: </h6>
+								<h6 class="d-inline text-muted" id="status"><small>Error</small></h6>
 							</div>
 						</div>
 						<div class="row">
 							<div class="d-inlined-none">
-								<h6 class="d-inline">Estimated Delivery: </h6>	
-								<h6 class="d-inline text-muted" id="eta"><small>Error</small></h6>	
+								<h6 class="d-inline">Estimated Delivery: </h6>
+								<h6 class="d-inline text-muted" id="eta"><small>Error</small></h6>
 							</div>
 						</div>
 						<div class="pb-4"><!-- Space --></div>
 						<div class="row">
-							<div id="orderMap" class="col card-rounded"></div>	
+							<div id="orderMap" class="col card-rounded"></div>
 						</div>
-					</div>	
+					</div>
 				</div>
 			</div>
 		</div>

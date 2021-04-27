@@ -32,6 +32,7 @@ $(() => {
     });
 
     setInterval(() => {
+        $('#spinner').removeClass('d-none');
         fetch("https://demand.team22.sweispring21.tk/api/v1/demand/orders", {
             method: "GET",
             headers: {
@@ -46,9 +47,12 @@ $(() => {
             orders = json.orders;
             populateTable();
             updateOrderDetails(undefined);
+            $('#spinner').addClass('d-none');
         }).catch(err => {
-            orders = []
+            orders = [];
+            $('#noOrdersAvailabeText').removeClass('d-none')
             console.error(err);
+            $('#spinner').addClass('d-none');
         });
     }, 5000)
 
@@ -69,7 +73,7 @@ function updateOrderDetails(orderIdClicked) {
 
     let orderId = orderIdClicked == undefined ? $("#orderId").text() : orderIdClicked;
 
-    if (orderId == null || orderId != "" || orderId == undefined) {
+    if (orderId == null || orderId == "" || orderId == undefined) {
         return
     }
 
@@ -82,7 +86,7 @@ function updateOrderDetails(orderIdClicked) {
     }
 
     if (order == undefined) {
-        $("#orderDetails").addClass("d-none")
+        $("#orderDetails").parent().addClass("d-none")
         return
     }
 
@@ -92,6 +96,17 @@ function updateOrderDetails(orderIdClicked) {
     $('#paymentType').text(formatCapsWordToStandard(order.paymentType));
     $('#status').text(formatCapsWordToStandard(order.orderStatus));
     $('#eta').text(order.eta + " minutes");
+    $("#items").parent().addClass('d-none')
+    $("#items").text("");
+
+    if (order["items"] !== undefined && order.items.length != 0) {
+        try {
+            $("#items").text(string);
+            $("#items").parent().removeClass('d-none')
+        } catch(e) {
+            console.error("Could not parse json items: " + e)
+        }
+    }
 
     // Remove route
     map.removeLayer('route');
@@ -161,11 +176,17 @@ function updateOrderDetails(orderIdClicked) {
                     .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
                 .addTo(map));
         });
-
-        $('#orderDetails').parent().removeClass('d-none');
     } else {
         $('#orderMap').parent().addClass('d-none');
         $('#eta').parent().parent().addClass("d-none");
+    }
+
+    $("#orderDetails").parent().removeClass("d-none");
+
+    if ($("#orderId").text() == orderId) {
+        $("html").animate({
+            scrollTop: $("#orderDetails").offset().top
+        }, 800);
     }
 }
 
@@ -187,6 +208,12 @@ function populateTable() {
             `</td>`;
         tBody.append(element)
     });
+
+    if (orders.length == 0) {
+        $('#noOrdersAvailabeText').addClass('d-none')
+    } else {
+        $('#noOrdersAvailabeText').removeClass('d-none')
+    }
 }
 
 function formatCapsWordToStandard(text) {
