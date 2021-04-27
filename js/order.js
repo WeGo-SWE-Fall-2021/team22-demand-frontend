@@ -122,6 +122,7 @@ $(() => {
 
 // Geocoder API
 $(() => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         countries: 'us',

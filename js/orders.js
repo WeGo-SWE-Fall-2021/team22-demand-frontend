@@ -6,6 +6,8 @@ var intervalVehicleUpdate = undefined;
 var orders = [];
 let mapMarkers = []
 
+mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
+
 let map = new mapboxgl.Map({
     container: 'orderMap', // container id
     style: 'mapbox://styles/mapbox/streets-v11',// style URL

@@ -1,5 +1,3 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
-
 /* Adds shadow on header once it passes height */
 $(window).scroll(() => {
     let header = $("header")
