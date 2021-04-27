@@ -18,7 +18,7 @@ $(() => {
             $("#usernameLabel").text(response.body["username"]);
         } else {
             // Failed to get user with token
-            // window.location.replace(cloudURL)
+            window.location.replace(cloudURL + "/login.html")
         }
     }).catch(error => {
         // Error fetching
@@ -96,10 +96,11 @@ async function getOrderDetails(orderId, map) {
 function showNewOrderDetails(order, map) {
     $('#orderId').text(order.orderId);
     $('#orderName').text(formatCapsWordToStandard(order.plugin));
-    $('#shippingAddress').text(order.orderDestination);
+    $('#shippingAddress').text(order.orderDestination.split);
     $('#paymentType').text(formatCapsWordToStandard(order.paymentType));
     $('#status').text(formatCapsWordToStandard(order.orderStatus));
     $('#eta').text(order.eta + " minutes");
+    $('#orderMap').addClass('d-none')
 
     if (order.orderStatus == "DELIVERED") {
         $('#eta').addClass("d-none");
@@ -109,7 +110,7 @@ function showNewOrderDetails(order, map) {
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: order.destinationCoordinate
+                    coordinates: adjust_coordinate(order.destinationCoordinate)
                 },
                 properties: {
                     title: 'Mapbox',
@@ -131,7 +132,7 @@ function showNewOrderDetails(order, map) {
                 .addTo(map);
         });
         map.addControl(new mapboxgl.NavigationControl());
-    } else {
+    } else if (order.orderStatus == "SHIPPED") {
         $('#eta').removeClass("d-none");
         var geojson = {
             type: 'FeatureCollection',
@@ -139,7 +140,7 @@ function showNewOrderDetails(order, map) {
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: order.dock
+                    coordinates: adjust_coordinate(order.dock)
                 },
                 properties: {
                     title: 'Mapbox',
@@ -149,7 +150,7 @@ function showNewOrderDetails(order, map) {
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: order.destinationCoordinate
+                    coordinates: adjust_coordinate(order.destinationCoordinate)
                 },
                 properties: {
                     title: 'Mapbox',
@@ -164,6 +165,41 @@ function showNewOrderDetails(order, map) {
         }
 
         map.on('load', function () {
+            map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicles-and-cars/110/Vehicles_and_cars_12-512.png',
+                function (error, image) {
+                    if (error) throw error;
+
+                    // Add the image to the map style.
+                    map.addImage('vehicle', image);
+
+                    // Add a data source containing one point feature.
+                    map.addSource('point', {
+                        'type': 'geojson',
+                        'data': {
+                            'type': 'FeatureCollection',
+                            'features': [{
+                                'type': 'Feature',
+                                'geometry': {
+                                    'type': 'Point',
+                                    'coordinates': adjust_coordinate(order.vehicleLocation)
+                                }
+                            }]
+                        }
+                    });
+
+                    // Add a layer to use the image to represent the data.
+                    map.addLayer({
+                        'id': 'points',
+                        'type': 'symbol',
+                        'source': 'point', // reference the data source
+                        'layout': {
+                            'icon-image': 'vehicle', // reference the image
+                            'icon-size': 0.25
+                        }
+                    });
+                }
+            );
+
             map.addSource('route', {
                 'type': 'geojson',
                 'data': {
@@ -200,9 +236,12 @@ function showNewOrderDetails(order, map) {
                 .addTo(map);
         });
         map.addControl(new mapboxgl.NavigationControl());
+        $('#orderMap').removeClass('d-none')
+    } else {
+        $('#orderDetails').addClass('d-none');
     }
 
-    $('#orderDetails').remove('d-none');
+    $('#orderDetails').removeClass('d-none');
 }
 
 function populateTable(orders) {
@@ -227,4 +266,10 @@ function populateTable(orders) {
 
 function formatCapsWordToStandard(text) {
     return text.charAt(0) + text.toLowerCase().slice(1)
+}
+
+function adjust_coordinate(loc) {
+    var array_strings = loc.split(",");
+    var array_floats = [parseFloat(array_strings[0]), parseFloat(array_strings[1])];
+    return array_floats;
 }
