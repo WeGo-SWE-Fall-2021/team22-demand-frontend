@@ -1,5 +1,3 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
-
 /* Adds shadow on header once it passes height */
 $(window).scroll(() => {
     let header = $("header")
@@ -29,7 +27,7 @@ $(window).resize(() => {
 
 // Switch from hamburger icon to x icon if pressed
 $(() => {
-    $('#mobile-nav-toggle').click(function () {
+    $(document).on('click', '#mobile-nav-toggle', function () {
         let hasList = $(this).hasClass('bi-list');
         if (hasList) {
             $(this).removeClass('bi-list');
@@ -48,14 +46,24 @@ $(() => {
 });
 
 $(() => {
-    $("#logoutButton").click(() => {
+    $(document).on('click', '#logoutButton', () => {
         logoutUser();
     });
 });
 
+var alertTimeoutId = undefined;
+
 function showAlert(text) {
+    if (alertTimeoutId != undefined) {
+        clearTimeout(alertTimeoutId)
+    }
+
     $("#main").removeClass('nav-height-padding').addClass('alert-height-with-nav-padding');
     $("#mainAlert").removeClass('d-none').text(text);
+
+    alertTimeoutId = setTimeout(function() {
+        hideAlert()
+    }, 5000)
 }
 
 function hideAlert() {

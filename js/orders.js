@@ -3,108 +3,106 @@ let cloud = window.location.hostname.split('.')[0]
 let cloudURL = `https://${cloud}.team22.sweispring21.tk`
 var intervalVehicleUpdate = undefined;
 
+var orders = [];
+let mapMarkers = []
+
 // General main func once documents finished loading
 $(() => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
     var map = new mapboxgl.Map({
         container: 'orderMap', // container id
         style: 'mapbox://styles/mapbox/streets-v11',// style URL
-        center: [0,0],
+        center: [0, 0],
         zoom: 9 // starting zoom
     });
+    map.addControl(new mapboxgl.NavigationControl());
 
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
     fetchLoggedInUser(cloud).then(response => {
         // Success getting user
         if (response.status == 200) {
-            $("#usernameLabel").text(response.body["username"]);
+            $("#usernameLabel").text(response.body.user.username);
         } else {
             // Failed to get user with token
             window.location.replace(cloudURL + "/login.html")
         }
     }).catch(error => {
-        // Error fetching
-        // showAlert("There was an error getting user information.")
         console.error("Error fetching: " + error)
-        hideAlert();
+        showAlert("There was an error getting user information.")
     });
 
-    // Fetch orders
-    fetch("https://demand.team22.sweispring21.tk/api/v1/demand/orders", {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        return Promise.reject(response)
-    }).then(json => {
-        let orders = json.orders;
-        populateTable(orders);
-    }).catch(err => {
-        console.error(err);
-    });
+    setInterval(() => {
+        fetch("https://demand.team22.sweispring21.tk/api/v1/demand/orders", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response)
+        }).then(json => {
+            orders = json.orders;
+            populateTable();
+            updateOrderDetails(undefined);
+        }).catch(err => {
+            orders = []
+            console.error(err);
+        });
+    }, 5000)
 
     // Handle click events on table rows
     $("#ordersTable tbody").on("click", "tr", function () {
         let tableRow = $(this);
         let tableDataObjectId = tableRow.find(".orderId");
         let orderId = tableDataObjectId.text();
-        getOrderDetails(orderId, map);
+
+        updateOrderDetails(orderId);
     });
 });
 
-async function getOrderDetails(orderId, map) {
-    if (intervalVehicleUpdate != undefined) {
-        intervalVehicleUpdate = clearInterval(intervalVehicleUpdate);
+function updateOrderDetails(orderIdClicked) {
+    if (orders == null || orders == {} || orders == undefined) {
+        return
     }
 
-    const response = await fetch(`https://demand.team22.sweispring21.tk/api/v1/demand/orders?orderId=${orderId}`);
-    if (!response.ok) {
-        console.error("There was an error fetching order. Error: " + response.status + " Body: " + response.text());
-        showAlert("Could not show order information for: " + orderId)
+    let orderId = orderIdClicked == undefined ? $("#orderId").text() : orderIdClicked;
+
+    if (orderId == null || orderId != "" || orderId == undefined) {
+        return
     }
 
-    // Was able to retreive data, check if we need to do a live update if vehicle has not delivered
-    let data = await response.json();
-    if (data.orders.length == 0) {
-        console.error("There was an error fetching order.")
-        showAlert("Could not show order information for: " + orderId)
-    }
-
-    let order = data.orders[0];
-    showNewOrderDetails(order, map);
-    // Create vehicle update
-    intervalVehicleUpdate = setInterval(async function () {
-        const response = await fetch(`https://demand.team22.sweispring21.tk/api/v1/demand/orders?orderId=${orderId}`);
-        if (!response.ok) {
-            console.error("There was an error fetching order. Status: " + response.status)
-            showAlert("Could not show order information for: " + orderId)
-            return
+    order = undefined;
+    for (const ordr in orders) {
+        if (ordr.orderId == orderId) {
+            order = ordr;
+            break
         }
+    }
 
-        let data = await response.json();
-        if (data.orders.length == 0) {
-            console.error("There was an error fetching order.")
-            showAlert("Could not show order information for: " + orderId)
-        }
-        let order = data.orders[0];
-        showNewOrderDetails(order, map)
-    }, 5000);
-}
+    if (order == undefined) {
+        $("#orderDetails").addClass("d-none")
+        return
+    }
 
-function showNewOrderDetails(order, map) {
     $('#orderId').text(order.orderId);
     $('#orderName').text(formatCapsWordToStandard(order.plugin));
-    $('#shippingAddress').text(order.orderDestination.split);
+    $('#shippingAddress').text(order.orderDestination);
     $('#paymentType').text(formatCapsWordToStandard(order.paymentType));
     $('#status').text(formatCapsWordToStandard(order.orderStatus));
     $('#eta').text(order.eta + " minutes");
-    $('#orderMap').addClass('d-none')
 
-    if (order.orderStatus == "DELIVERED") {
-        $('#eta').addClass("d-none");
+    // Remove route
+    map.removeLayer('route');
+    map.removeSource('route');
+    map.removeSource('vehicleLocation');
+    map.removeLayer('vehiclePoint');
+
+    mapMarkers.forEach((marker) => { marker.remove(); })
+    mapMarkers = []
+
+    if (order.orderStatus != "PROCESSING" && order.orderStatus != "ERROR") {
         var geojson = {
             type: 'FeatureCollection',
             features: [{
@@ -120,24 +118,13 @@ function showNewOrderDetails(order, map) {
             }]
         };
 
-        geojson.features.forEach(function (marker) {
-            // create a HTML element for each feature
-            var el = document.createElement('div');
-            el.className = 'marker';
-
-            // make a marker for each feature and add to the map
-            new mapboxgl.Marker(el)
-                .setLngLat(marker.geometry.coordinates)
-                .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-                    .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-                .addTo(map);
-        });
-        map.addControl(new mapboxgl.NavigationControl());
-    } else if (order.orderStatus == "SHIPPED") {
-        $('#eta').removeClass("d-none");
-        var geojson = {
-            type: 'FeatureCollection',
-            features: [{
+        if (order.orderStatus == "DELIVERED") {
+            map.flyTo({
+                center: adjust_coordinate(order.orderDestination)
+            });
+            $('#eta').parent().parent().addClass("d-none");
+        } else {
+            geojson.features.push({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
@@ -147,108 +134,42 @@ function showNewOrderDetails(order, map) {
                     title: 'Mapbox',
                     description: "Starting Location"
                 }
-            }, {
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: adjust_coordinate(order.destinationCoordinate)
-                },
-                properties: {
-                    title: 'Mapbox',
-                    description: 'Destination Location'
-                }
-            }]
-        };
+            });
 
-        if (map.getSource('route')) {
-            map.removeLayer('route')
-            map.removeSource('route')
+            if (map.loaded()) {
+                loadVehicleRoute(map, order.vehicleLocation, order.geometry)
+            } else {
+                map.on('load', loadVehicleRoute(map, order.vehicleLocation, order.geometry));
+            }
+
+            map.flyTo({
+                center: adjust_coordinate(order.vehicleLocation)
+            });
+            $('#orderMap').parent().removeClass('d-none');
+            $('#eta').parent().parent().removeClass("d-none");
         }
 
-        map.on('load', function () {
-            map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicles-and-cars/110/Vehicles_and_cars_12-512.png',
-                function (error, image) {
-                    if (error) throw error;
-
-                    // Add the image to the map style.
-                    map.addImage('vehicle', image);
-
-                    // Add a data source containing one point feature.
-                    map.addSource('point', {
-                        'type': 'geojson',
-                        'data': {
-                            'type': 'FeatureCollection',
-                            'features': [{
-                                'type': 'Feature',
-                                'geometry': {
-                                    'type': 'Point',
-                                    'coordinates': adjust_coordinate(order.vehicleLocation)
-                                }
-                            }]
-                        }
-                    });
-
-                    // Add a layer to use the image to represent the data.
-                    map.addLayer({
-                        'id': 'points',
-                        'type': 'symbol',
-                        'source': 'point', // reference the data source
-                        'layout': {
-                            'icon-image': 'vehicle', // reference the image
-                            'icon-size': 0.25
-                        }
-                    });
-                }
-            );
-
-            map.addSource('route', {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'properties': {},
-                    'geometry': order.geometry,
-                }
-            });
-            map.addLayer({
-                'id': 'route',
-                'type': 'line',
-                'source': 'route',
-                'layout': {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                'paint': {
-                    'line-color': '#888',
-                    'line-width': 8
-                }
-            });
-        });
-
-        geojson.features.forEach(function (marker) {
+        geojson.features.forEach((marker) => {
             // create a HTML element for each feature
             var el = document.createElement('div');
             el.className = 'marker';
 
             // make a marker for each feature and add to the map
-            new mapboxgl.Marker(el)
+            mapMarkers.push(new mapboxgl.Marker(el)
                 .setLngLat(marker.geometry.coordinates)
                 .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
                     .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-                .addTo(map);
+                .addTo(map));
         });
-        map.flyTo({
-            center: adjust_coordinate(order.vehicleLocation)
-        });
-        map.addControl(new mapboxgl.NavigationControl());
-        $('#orderMap').removeClass('d-none')
-    } else {
-        $('#orderDetails').addClass('d-none');
-    }
 
-    $('#orderDetails').removeClass('d-none');
+        $('#orderDetails').parent().removeClass('d-none');
+    } else {
+        $('#orderMap').parent().addClass('d-none');
+        $('#eta').parent().parent().addClass("d-none");
+    }
 }
 
-function populateTable(orders) {
+function populateTable() {
     var dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' };
     let tBody = $("#ordersTable > tbody");
     tBody.empty();
@@ -276,4 +197,64 @@ function adjust_coordinate(loc) {
     var array_strings = loc.split(",");
     var array_floats = [parseFloat(array_strings[0]), parseFloat(array_strings[1])];
     return array_floats;
+}
+
+function loadVehicleRoute(map, vehicleLocation, geometry) {
+    map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicles-and-cars/110/Vehicles_and_cars_12-512.png', (error, image) => {
+        if (error) throw error;
+
+        // Add the image to the map style.
+        map.addImage('vehicle', image);
+
+        // Add a data source containing one point feature.
+        map.addSource('vehicleLocation', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': [{
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': adjust_coordinate(vehicleLocation)
+                    }
+                }]
+            }
+        });
+    });
+
+    // Add a layer to use the image to represent the data.
+    map.addLayer({
+        'id': 'vehiclePoint',
+        'type': 'symbol',
+        'source': 'vehicleLocation', // reference the data source
+        'layout': {
+            'icon-image': 'vehicle', // reference the image
+            'icon-size': 0.25
+        }
+    });
+
+    // Add route
+    map.addSource('route', {
+        'type': 'geojson',
+        'data': {
+            'type': 'Feature',
+            'properties': {},
+            'geometry': geometry,
+        }
+    });
+
+    // Add line route style
+    map.addLayer({
+        'id': 'route',
+        'type': 'line',
+        'source': 'route',
+        'layout': {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        'paint': {
+            'line-color': '#888',
+            'line-width': 8
+        }
+    });
 }

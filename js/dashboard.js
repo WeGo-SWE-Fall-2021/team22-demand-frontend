@@ -10,8 +10,6 @@ $(() => {
         if (response.status == 200) {
             $("#usernameLabel").text(response.body.user.username);
         } else {
-            console.log("Was unable to get user using cookies.")
-            // Failed to get user with token, route them back to login
             window.location.replace(cloudURL + '/login.html')
         }
     }).catch(error => {
@@ -41,10 +39,11 @@ async function fetchPlugins() {
             let pluginName = name.charAt(0).toUpperCase() + name.slice(1) + " Delivery";
             let buttonText = available ? "Order now!" : "Unavailable";
             let buttonStyle = available ? 'btn-primary' : 'btn-secondary'
-            let disableClicking = available ? '' : 'disabled'
+            let disableClicking = available ? '' : 'disabled';
             let buttonLink = available ? 'order.html?name=' + plugin.name : ''
+            let image = "image" in plugin ? plugin.image : ''
             var element =   `<div class="card col p-2 plugin-card">
-                                <img src="" class="card-img-top" alt="...">'
+                                <img src="${image}" class="card-img-top" alt="plugin-image">'
                                 <div class="card-body">
                                     <h5 class="card-title">${pluginName}</h5>
                                     <a href="${buttonLink}" class="btn ${buttonStyle} w-100" ${disableClicking}>${buttonText}</a>

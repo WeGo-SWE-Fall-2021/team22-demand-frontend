@@ -29,7 +29,6 @@ $(() => {
             $('#phoneNumber').val(response.body.user.phoneNumber);
             $('#email').val(response.body.user.email);
         } else {
-            console.log("Was unable to get user using cookies.")
             // Failed to get user with token, route them back to login
             window.location.replace(cloudURL + '/login.html')
         }
@@ -64,7 +63,7 @@ async function fetchPlugin(name) {
 
 // Button on click handler
 $(() => {
-    $("#orderButton").click(() => {
+    $(document).on('click', '#orderButton', () => {
         $('#orderButtonSpinner').removeClass('d-none');
         $(this).prop('disabled', true).text("Submitting Order...")
 
@@ -123,6 +122,7 @@ $(() => {
 
 // Geocoder API
 $(() => {
+    mapboxgl.accessToken = 'pk.eyJ1IjoibmRhbHRvbjEiLCJhIjoiY2tsNWlkMHBwMTlncDJwbGNuNzJ6OGo2ciJ9.QbcnC4OnBjZU6P6JN6m3Pw';
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         countries: 'us',
