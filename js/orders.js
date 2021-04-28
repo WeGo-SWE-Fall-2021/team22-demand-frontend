@@ -68,11 +68,7 @@ function fetchOrders() {
         $('#spinner').addClass('d-none');
     }).catch(err => {
         if (err.status != undefined) {
-            if (err.status == 404) {
-                orders = [];
-                $('#noOrdersAvailabeText').removeClass('d-none')
-                console.log("no orders available")
-            } else if (err.status == 401) {
+            if (err.status == 401) {
                 console.log("User unauthorized to view this page");
                 window.location.replace(cloudURL + "/login.html")
             } else {
