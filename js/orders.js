@@ -81,7 +81,7 @@ function fetchOrders() {
         } else {
             console.error(err);
         }
-    
+
         $('#spinner').addClass('d-none');
     });
 
@@ -255,6 +255,39 @@ function adjust_coordinate(loc) {
 }
 
 function loadVehicleRoute(vehicleLocation, geometry) {
+    let routeSource = {
+        'type': 'geojson',
+        'data': {
+            'type': 'Feature',
+            'properties': {},
+            'geometry': geometry,
+        }
+    }
+
+    if (map.getSource('route') != undefined) {
+        map.getSource('route').setData(routeSource.data);
+    } else {
+        map.addSource('route', routeSource);
+    }
+
+    let routeLayer = {
+        'id': 'route',
+        'type': 'line',
+        'source': 'route',
+        'layout': {
+            'line-join': 'round',
+            'line-cap': 'round'
+        },
+        'paint': {
+            'line-color': '#888',
+            'line-width': 8
+        }
+    }
+
+    if (map.getLayer('route') == undefined) {
+        map.addLayer(routeLayer)
+    }
+
     // Add a data source containing one point feature.
     let vehicleSource = {
         'type': 'geojson',
@@ -291,40 +324,6 @@ function loadVehicleRoute(vehicleLocation, geometry) {
     if (map.getLayer('vehiclePoint') == undefined) {
         map.addLayer(vehiclePoint);
     }
-
-    let routeSource = {
-        'type': 'geojson',
-        'data': {
-            'type': 'Feature',
-            'properties': {},
-            'geometry': geometry,
-        }
-    }
-
-    if (map.getSource('route') != undefined) {
-        map.getSource('route').setData(routeSource.data);
-    } else {
-        map.addSource('route', routeSource);
-    }
-
-    let routeLayer = {
-        'id': 'route',
-        'type': 'line',
-        'source': 'route',
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#888',
-            'line-width': 8
-        }
-    }
-
-    if (map.getLayer('route') == undefined) {
-        map.addLayer(routeLayer)
-    }
-
     // Hide route
     setLayerVisibility('route', 'visible')
     // Hide vehicle image
@@ -341,5 +340,4 @@ function setLayerVisibility(layerId, visibility) {
             map.setLayoutProperty(layerId, 'visibility', visibility);
         }
     }
-
 }

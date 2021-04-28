@@ -37,6 +37,7 @@
 	<!-- Local Common Services JS files-->
 	<script src="../common/js/fetchLoggedInUser.js"></script>
 	<script src="../common/js/logoutUser.js"></script>
+	<script src="../common/js/validation.js"
 
 	<!--	Local Javascript	-->
 	<script src="js/order.js"></script>
@@ -102,14 +103,14 @@
 						<label class="col-form-label-sm" for="streetAddress">Street Address</label>
 						<div id="geocoder"></div>
 						<div class="invalid-feedback">
-							Make sure street address is not empty.
+							Make sure street address is valid.
 						</div>
 					</div>
 					<div class="col-12 mb-2">
 						<label class="col-form-label-sm" for="city">City</label>
 						<input type="text" class="form-control" id="city" required>
 						<div class="invalid-feedback">
-							Make sure city is not empty.
+							Make sure city is valid.
 						</div>
 					</div>
 					<div class="row mb-2">
@@ -117,14 +118,14 @@
 							<label class="col-form-label-sm" for="state">State</label>
 							<input type="text" class="form-control" id="state" required>
 							<div class="invalid-feedback">
-								Make sure state is not empty.
+								Make sure state is valid.
 							</div>
 						</div>
 						<div class="col-sm">
 							<label class="col-form-label-sm" for="zipCode">Zip Code</label>
 							<input type="text" class="form-control" id="zipCode" required>
 							<div class="invalid-feedback">
-								Make sure zip code is not empty.
+								Make sure zip code valid.
 							</div>
 						</div>
 					</div>
@@ -160,6 +161,9 @@
 						<div class="col-sm">
 							<label class="col-form-label-sm" for="expiration">Expiration</label>
 							<input type="month" class="form-control" id="expiration" required>
+							<div class="invalid-feedback">
+								Make sure cvv is not empty.
+							</div>	
 						</div>
 						<div class="col-sm">
 							<label class="col-form-label-sm" for="cvv">CVV</label>

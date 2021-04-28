@@ -11,7 +11,7 @@ $(() => {
     // Check if uri has valid parameters
     if (pluginName == '' || pluginName == null) {
         // Redirect to dashboard because order plugin is invalid
-        window.location.replace(cloudURL + 'dashboard.html');
+        // window.location.replace(cloudURL + 'dashboard.html');
     } else {
         let name = pluginName.toLowerCase().replace('_', " ");
         name = name.charAt(0).toUpperCase() + name.slice(1) + " Order";
@@ -63,11 +63,19 @@ async function fetchPlugin(name) {
 
 // Button on click handler
 $(() => {
+    $('#city').on('input', function() { validateString(charactersOnlyRegex, this) });
+    $('#state').on('input', function() { validateString(charactersOnlyRegex, this) });
+    $('#zipCode').on('input', function() { validateString(zipCodeRegex, this) });
+    $('#cardholderName').on('input', function() { validateString(nameRegex, this) });
+    $('#cardNumber').on('input', function() { validateString(stringEmpty, this) });
+    $('#expiration').on('input', function() { validateString(stringEmpty, this) });
+    $('#cvv').on('input', function() { validateString(stringEmpty, this) });
+
     $(document).on('click', '#orderButton', () => {
         $('#orderButtonSpinner').removeClass('d-none');
         $("#orderButton").prop('disabled', true).text("Submitting Order...")
 
-        $('.card-body').addClass('was-validated');
+        $('input').trigger('input');
 		let errorVisible = $('.invalid-feedback:visible').length
 		if (errorVisible !== 0) {
 			console.log("There are currently errors in validation. User needs to fix those errors before proceeding.")
@@ -81,13 +89,15 @@ $(() => {
         let city = $('#city').val();
         let state = $('#state').val();
         let zipCode = $('#zipCode').val();
-        let completeAddress = `${streetAddress}, ${city}, ${state} ${zipCode}, United States`;
 
-        if (city == "" | state == "" | zipCode == "" | streetAddress == "") {
-            $('#orderButton').prop('disabled', false).text("Submit Order");
-            console.log("Fields cannot be empty")
-            return;
+        if (streetAddress == ""){
+            $('#orderButtonSpinner').addClass('d-none');
+            $("#orderButton").prop('disabled', false).text("Submit Order");
+            showAlert("You must have an address.");
+            return
         }
+
+        let completeAddress = `${streetAddress}, ${city}, ${state} ${zipCode}, United States`;
 
         let data = {
             'paymentType': cardType,
@@ -146,11 +156,11 @@ $(() => {
             let property = context[i];
             let propertyText = property.text
             if (property.id.includes("place")) {
-                $('#city').val(propertyText);
+                $('#city').val(propertyText).trigger("input");
             } else if (property.id.includes("region")) {
-                $('#state').val(propertyText);
+                $('#state').val(propertyText).trigger("input");
             } else if (property.id.includes("postcode")) {
-                $("#zipCode").val(propertyText);
+                $("#zipCode").val(propertyText).trigger("input");
             }
         }
     })
