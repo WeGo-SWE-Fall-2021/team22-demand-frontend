@@ -280,7 +280,7 @@ function loadVehicleRoute(vehicleLocation, geometry) {
 
 
     if (map.getLayer('vehiclePoint') != undefined) {
-        map.getLayer('vehiclePoint').setData();
+        map.getLayer('vehiclePoint').setData(vehiclePoint);
     } else {
         map.addLayer(vehiclePoint);
     }
