@@ -278,10 +278,7 @@ function loadVehicleRoute(vehicleLocation, geometry) {
         }
     }
 
-
-    if (map.getLayer('vehiclePoint') != undefined) {
-        map.getLayer('vehiclePoint').setData(vehiclePoint);
-    } else {
+    if (map.getLayer('vehiclePoint') == undefined) {
         map.addLayer(vehiclePoint);
     }
 
@@ -314,9 +311,7 @@ function loadVehicleRoute(vehicleLocation, geometry) {
         }
     }
 
-    if (map.getLayer('route') != undefined) {
-        map.getLayer('route').setData(routeLayer)
-    } else {
+    if (map.getLayer('route') == undefined) {
         map.addLayer(routeLayer)
     }
 
