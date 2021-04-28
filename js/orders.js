@@ -261,7 +261,7 @@ function loadVehicleRoute(vehicleLocation, geometry) {
     }
 
     if (map.getSource('vehicleLocation') != undefined) {
-        vehicleSourceObject.setData(vehicleSource.data);
+        map.getSource('vehicleLocation').setData(vehicleSource.data);
     } else {
         map.addSource('vehicleLocation', vehicleSource);
     }
