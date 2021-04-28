@@ -17,6 +17,12 @@ let map = new mapboxgl.Map({
 
 map.addControl(new mapboxgl.NavigationControl());
 
+map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicles-and-cars/110/Vehicles_and_cars_12-512.png', (error, image) => {
+    if (error) throw error;
+    // Add the image to the map style.
+    map.addImage('vehicle', image);
+}
+
 // General main func once documents finished loading
 $(() => {
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
@@ -110,26 +116,9 @@ function updateOrderDetails(orderIdClicked) {
         try {
             $("#items").text(string);
             $("#items").parent().removeClass('d-none')
-        } catch(e) {
+        } catch (e) {
             console.error("Could not parse json items: " + e)
         }
-    }
-
-    // Remove route
-    if (map.getLayer('route') != undefined) {
-        map.removeLayer('route');
-    }
-
-    if (map.getSource('route') != undefined) {
-        map.removeSource('route');
-    }
-
-    if (map.getLayer('vehiclePoint') != undefined) {
-        map.removeLayer('vehiclePoint');
-    }
-
-    if (map.getSource('vehicleLocation') != undefined) {
-        map.removeSource('vehicleLocation');
     }
 
     mapMarkers.forEach((marker) => { marker.remove(); })
@@ -152,7 +141,12 @@ function updateOrderDetails(orderIdClicked) {
         };
 
         if (order.orderStatus == "DELIVERED") {
-            if ($("#orderId").text() == orderId) {
+            // Hide route
+            setLayerVisibility('route', 'none')
+            // Hide vehicle image
+            setLayerVisibility('vehiclePoint', 'none')
+
+            if (order.orderId == orderIdClicked) {
                 map.flyTo({
                     center: adjust_coordinate(order.destinationCoordinate),
                     zoom: 15
@@ -178,7 +172,7 @@ function updateOrderDetails(orderIdClicked) {
                 map.on('load', loadVehicleRoute(order.vehicleLocation, order.geometry));
             }
 
-            if ($("#orderId").text() == orderId) {
+            if (order.orderId == orderIdClicked) {
                 map.flyTo({
                     center: adjust_coordinate(order.vehicleLocation),
                     zoom: 12
@@ -251,52 +245,62 @@ function adjust_coordinate(loc) {
 }
 
 function loadVehicleRoute(vehicleLocation, geometry) {
-    map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicles-and-cars/110/Vehicles_and_cars_12-512.png', (error, image) => {
-        if (error) throw error;
+    // Add a data source containing one point feature.
+    let vehicleSource = {
+        'type': 'geojson',
+        'data': {
+            'type': 'FeatureCollection',
+            'features': [{
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': adjust_coordinate(vehicleLocation)
+                }
+            }]
+        }
+    }
 
-        // Add the image to the map style.
-        map.addImage('vehicle', image);
+    if (map.getSource('vehicleLocation') != undefined) {
+        map.getSource('vehicleLocation').setData(vehicleSource);
+    } else {
+        map.addSource('vehicleLocation', vehicleSource);
+    }
 
-        // Add a data source containing one point feature.
-        map.addSource('vehicleLocation', {
-            'type': 'geojson',
-            'data': {
-                'type': 'FeatureCollection',
-                'features': [{
-                    'type': 'Feature',
-                    'geometry': {
-                        'type': 'Point',
-                        'coordinates': adjust_coordinate(vehicleLocation)
-                    }
-                }]
-            }
-        });
+    // Add a vehicle point layer to use the image to represent the data.
 
-        // Add a layer to use the image to represent the data.
+    let vehiclePoint = {
+        'id': 'vehiclePoint',
+        'type': 'symbol',
+        'source': 'vehicleLocation', // reference the data source
+        'layout': {
+            'icon-image': 'vehicle', // reference the image
+            'icon-size': 0.25
+        }
+    }
 
-        map.addLayer({
-            'id': 'vehiclePoint',
-            'type': 'symbol',
-            'source': 'vehicleLocation', // reference the data source
-            'layout': {
-                'icon-image': 'vehicle', // reference the image
-                'icon-size': 0.25
-            }
-        });    
-    });
 
-    // Add route
-    map.addSource('route', {
+    if (map.getLayer('vehiclePoint') != undefined) {
+        map.getLayer('vehiclePoint').setData();
+    } else {
+        map.addLayer(vehiclePoint);
+    }
+
+    let routeSource = {
         'type': 'geojson',
         'data': {
             'type': 'Feature',
             'properties': {},
             'geometry': geometry,
         }
-    });
+    }
 
-    // Add line route style
-    map.addLayer({
+    if (map.getSource('route') != undefined) {
+        map.getSource('route').setData(routeSource);
+    } else {
+        map.addSource('route', routeSource);
+    }
+
+    let routeLayer = {
         'id': 'route',
         'type': 'line',
         'source': 'route',
@@ -308,5 +312,29 @@ function loadVehicleRoute(vehicleLocation, geometry) {
             'line-color': '#888',
             'line-width': 8
         }
-    });
+    }
+
+    if (map.getLayer('route') != undefined) {
+        map.getLayer('route').setData(routeLayer)
+    } else {
+        map.addLayer(routeLayer)
+    }
+
+    // Hide route
+    setLayerVisibility('route', 'visible')
+    // Hide vehicle image
+    setLayerVisibility('vehiclePoint', 'visible')
+}
+
+function setLayerVisibility(layerId, visibility) {
+    // Hide route
+    if (map.getLayer(layerId) != undefined) {
+        let visibility = map.getLayoutProperty(layerId, 'visibility');
+
+        // Toggle layer visibility by changing the layout object's visibility property.
+        if (visibility === visibility) {
+            map.setLayoutProperty(layerId, 'visibility', visibility);
+        }
+    }
+
 }
