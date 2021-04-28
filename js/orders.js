@@ -69,9 +69,21 @@ function fetchOrders() {
         updateOrderDetails(undefined);
         $('#spinner').addClass('d-none');
     }).catch(err => {
-        orders = [];
-        $('#noOrdersAvailabeText').removeClass('d-none')
-        console.error(err);
+        if (err.status != undefined) {
+            if (err.status == 404) {
+                orders = [];
+                $('#noOrdersAvailabeText').removeClass('d-none')
+                console.log("no orders available")
+            } else if (err.status == 401) {
+                console.log("User unauthorized to view this page");
+                window.location.replace(cloudURL + "/login.html")
+            } else {
+                showAlert("Could not fetch orders from server.")
+            }
+        } else {
+            console.error(err);
+        }
+    
         $('#spinner').addClass('d-none');
     });
 
