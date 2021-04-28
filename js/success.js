@@ -1,3 +1,6 @@
+let cloud = window.location.hostname.split('.')[0]
+let cloudURL = `https://${cloud}.team22.sweispring21.tk`
+
 $(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
