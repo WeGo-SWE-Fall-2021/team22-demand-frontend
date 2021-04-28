@@ -21,7 +21,7 @@ map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicl
     if (error) throw error;
     // Add the image to the map style.
     map.addImage('vehicle', image);
-}
+});
 
 // General main func once documents finished loading
 $(() => {
