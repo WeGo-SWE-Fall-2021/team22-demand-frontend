@@ -65,14 +65,14 @@ async function fetchPlugin(name) {
 $(() => {
     $(document).on('click', '#orderButton', () => {
         $('#orderButtonSpinner').removeClass('d-none');
-        $(this).prop('disabled', true).text("Submitting Order...")
+        $("#orderButton").prop('disabled', true).text("Submitting Order...")
 
         $('.card-body').addClass('was-validated');
 		let errorVisible = $('.invalid-feedback:visible').length
 		if (errorVisible !== 0) {
 			console.log("There are currently errors in validation. User needs to fix those errors before proceeding.")
             $('#orderButtonSpinner').addClass('d-none');
-            $(this).prop('disabled', false).text("Submit Order")    
+            $("#orderButton").prop('disabled', false).text("Submit Order")    
             return
 		}
 
@@ -82,7 +82,6 @@ $(() => {
         let state = $('#state').val();
         let zipCode = $('#zipCode').val();
         let completeAddress = `${streetAddress}, ${city}, ${state} ${zipCode}, United States`;
-
 
         if (city == "" | state == "" | zipCode == "" | streetAddress == "") {
             $('#orderButton').prop('disabled', false).text("Submit Order");

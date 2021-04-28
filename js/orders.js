@@ -1,8 +1,6 @@
 /* Global Variables */
 let cloud = window.location.hostname.split('.')[0]
 let cloudURL = `https://${cloud}.team22.sweispring21.tk`
-var intervalVehicleUpdate = undefined;
-
 var orders = [];
 let mapMarkers = []
 

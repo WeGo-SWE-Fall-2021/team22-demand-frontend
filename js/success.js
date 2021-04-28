@@ -20,12 +20,12 @@ $(() => {
         }
     }).catch(error => {
         if (error.status != undefined) {
-            if (error.status == 502) {
-                console.error("Error fetching: " + error)
-                showAlert("There was an error communicating with the server.");  
-            } else {
+            if (error.status == 401) {
                 console.error("You need to be authenticated before proceeding");
                 window.location.replace('../login.html');
+            } else {
+                console.error("Error fetching: " + error)
+                showAlert("There was an error communicating with the server.");  
             }
         }
     });
