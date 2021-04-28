@@ -43,7 +43,7 @@ async function fetchPlugins() {
             let buttonLink = available ? 'order.html?name=' + plugin.name : ''
             let image = "image" in plugin ? plugin.image : ''
             var element =   `<div class="card col p-2 plugin-card">
-                                <img src="${image}" class="card-img-top" alt="plugin-image">'
+                                <img src="${image}" class="card-img-top" alt="plugin-image">
                                 <div class="card-body">
                                     <h5 class="card-title">${pluginName}</h5>
                                     <a href="${buttonLink}" class="btn ${buttonStyle} w-100" ${disableClicking}>${buttonText}</a>

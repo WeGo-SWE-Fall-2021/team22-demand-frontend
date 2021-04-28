@@ -138,7 +138,8 @@ $(() => {
 
     geocoder.on('result', function (data) {
         const result = data.result;
-        let address = result.address + " " + result.text
+        let numberAddress = result.address;
+        let address = numberAddress != undefined ? numberAddress + " " + result.text : result.text;
         $('#streetAddress').val(address);
         let context = result.context
         for (var i = 0; i < context.length; i++) {
