@@ -261,7 +261,7 @@ function loadVehicleRoute(vehicleLocation, geometry) {
     }
 
     if (map.getSource('vehicleLocation') != undefined) {
-        map.getSource('vehicleLocation').setData(vehicleSource);
+        vehicleSourceObject.setData(vehicleSource.data);
     } else {
         map.addSource('vehicleLocation', vehicleSource);
     }
@@ -292,7 +292,7 @@ function loadVehicleRoute(vehicleLocation, geometry) {
     }
 
     if (map.getSource('route') != undefined) {
-        map.getSource('route').setData(routeSource);
+        map.getSource('route').setData(routeSource.data);
     } else {
         map.addSource('route', routeSource);
     }
@@ -324,10 +324,10 @@ function loadVehicleRoute(vehicleLocation, geometry) {
 function setLayerVisibility(layerId, visibility) {
     // Hide route
     if (map.getLayer(layerId) != undefined) {
-        let visibility = map.getLayoutProperty(layerId, 'visibility');
+        let visibilityProperty = map.getLayoutProperty(layerId, 'visibility');
 
         // Toggle layer visibility by changing the layout object's visibility property.
-        if (visibility === visibility) {
+        if (visibilityProperty != visibility) {
             map.setLayoutProperty(layerId, 'visibility', visibility);
         }
     }
