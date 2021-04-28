@@ -11,7 +11,7 @@ $(() => {
     // Check if uri has valid parameters
     if (pluginName == '' || pluginName == null) {
         // Redirect to dashboard because order plugin is invalid
-        window.location.replace(cloudURL + '/dashboard.html');
+        window.location.replace(cloudURL + 'dashboard.html');
     } else {
         let name = pluginName.toLowerCase().replace('_', " ");
         name = name.charAt(0).toUpperCase() + name.slice(1) + " Order";
@@ -109,15 +109,15 @@ $(() => {
             }
             return Promise.reject(response)
         }).then(data => {
-            console.log(data)
-            alert("Successfully created order! Order Id:" + data.orderId);
+            console.log("Successfully created order! Order Id:" + data.orderId);
+            window.location.replace(`success.html?orderId=${data.orderId}`);
         }).catch(error => {
             $('#orderButton').prop('disabled', false).text("Submit Order");
             // Handle error here
             console.error("There was an error with sending order: " + error);
             showAlert("There was an error sending order: " + error);
-        })
-    })
+        });
+    });
 });
 
 // Geocoder API
