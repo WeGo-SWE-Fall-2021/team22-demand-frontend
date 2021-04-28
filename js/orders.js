@@ -154,7 +154,8 @@ function updateOrderDetails(orderIdClicked) {
         if (order.orderStatus == "DELIVERED") {
             if ($("#orderId").text() == orderId) {
                 map.flyTo({
-                    center: adjust_coordinate(order.destinationCoordinate)
+                    center: adjust_coordinate(order.destinationCoordinate),
+                    zoom: 15
                 });
             }
             $('#eta').parent().parent().addClass("d-none");
@@ -179,7 +180,8 @@ function updateOrderDetails(orderIdClicked) {
 
             if ($("#orderId").text() == orderId) {
                 map.flyTo({
-                    center: adjust_coordinate(order.vehicleLocation)
+                    center: adjust_coordinate(order.vehicleLocation),
+                    zoom: 12
                 });
             }
             $('#orderMap').parent().removeClass('d-none');
