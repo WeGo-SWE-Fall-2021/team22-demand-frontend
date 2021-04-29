@@ -207,7 +207,7 @@ function updateOrderDetails(orderIdClicked) {
 
     $("#orderDetails").parent().removeClass("d-none");
 
-    if ($("#orderId").text() == orderId) {
+    if (order.orderId == orderIdClicked) {
         $("html").animate({
             scrollTop: $("#orderDetails").offset().top
         }, 800);
