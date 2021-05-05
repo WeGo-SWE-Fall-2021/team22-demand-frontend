@@ -11,7 +11,7 @@ $(() => {
     // Check if uri has valid parameters
     if (pluginName == '' || pluginName == null) {
         // Redirect to dashboard because order plugin is invalid
-        window.location.replace(cloudURL + 'dashboard.html');
+        window.location.replace('dashboard.html');
     } else {
         let name = pluginName.toLowerCase().replace('_', " ");
         name = name.charAt(0).toUpperCase() + name.slice(1) + " Order";
