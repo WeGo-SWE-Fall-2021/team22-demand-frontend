@@ -1,6 +1,5 @@
 /* Global Variables */
-let cloud = window.location.hostname.split('.')[0]
-let cloudURL = `https://${cloud}.team22.sweispring21.tk`
+let cloudURL = `https://wego.madebyerikb.com`
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -11,7 +10,7 @@ $(() => {
     // Check if uri has valid parameters
     if (pluginName == '' || pluginName == null) {
         // Redirect to dashboard because order plugin is invalid
-        window.location.replace('dashboard.html');
+        window.location.replace('/demand/dashboard.html');
     } else {
         let name = pluginName.toLowerCase().replace('_', " ");
         name = name.charAt(0).toUpperCase() + name.slice(1) + " Order";
@@ -20,7 +19,7 @@ $(() => {
     }
 
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
-    fetchLoggedInUser(cloud).then(response => {
+    fetchLoggedInUser().then(response => {
         // Success getting user
         if (response.status == 200) {
             $("#usernameLabel").text(response.body.user.username);
@@ -40,7 +39,7 @@ $(() => {
 });
 
 async function fetchPlugin(name) {
-    fetch(`https://demand.team22.sweispring21.tk/api/v1/demand/plugins?name=${name}`, {
+    fetch(`${cloudURL}/demand/api/plugins?name=${name}`, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
@@ -106,7 +105,7 @@ $(() => {
             'items': []
         };
 
-        fetch("https://demand.team22.sweispring21.tk/api/v1/demand/order", {
+        fetch(`${cloudURL}/demand/api/order`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -119,7 +118,7 @@ $(() => {
             return Promise.reject(response)
         }).then(data => {
             console.log("Successfully created order! Order Id:" + data.orderId);
-            window.location.replace(`success.html?orderId=${data.orderId}`);
+            window.location.replace(`/demand/success.html?orderId=${data.orderId}`);
         }).catch(error => {
             $('#orderButton').prop('disabled', false).text("Submit Order");
             // Handle error here
