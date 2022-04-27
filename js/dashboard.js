@@ -1,11 +1,10 @@
 /* Global Variables */
-let cloud = window.location.hostname.split('.')[0]
-let cloudURL = `https://${cloud}.team22.sweispring21.tk`
+let cloudURL = `https://wego.madebyerikb.com`
 
 // General main func once documents finished loading
 $(() => {
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
-    fetchLoggedInUser(cloud).then(response => {
+    fetchLoggedInUser().then(response => {
         // Success getting user
         if (response.status == 200) {
             $("#usernameLabel").text(response.body.user.username);
@@ -22,7 +21,7 @@ $(() => {
 });
 
 async function fetchPlugins() {
-    fetch("https://demand.team22.sweispring21.tk/api/v1/demand/plugins?name=all", {
+    fetch(`${cloudURL}/demand/api/plugins?name=all`, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'

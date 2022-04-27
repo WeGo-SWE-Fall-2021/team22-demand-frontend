@@ -1,6 +1,5 @@
 /* Global Variables */
-let cloud = window.location.hostname.split('.')[0]
-let cloudURL = `https://${cloud}.team22.sweispring21.tk`
+let cloudURL = `https://wego.madebyerikb.com`
 var orders = [];
 let mapMarkers = []
 
@@ -24,7 +23,7 @@ map.loadImage('https://cdn3.iconfinder.com/data/icons/transport-02-set-of-vehicl
 // General main func once documents finished loading
 $(() => {
     // This function checks to see if there is credentials saved. If so just direct them to the dashboard
-    fetchLoggedInUser(cloud).then(response => {
+    fetchLoggedInUser().then(response => {
         // Success getting user
         if (response.status == 200) {
             $("#usernameLabel").text(response.body.user.username);
@@ -51,7 +50,7 @@ $(() => {
 
 function fetchOrders() {
     $('#spinner').removeClass('d-none');
-    fetch("https://demand.team22.sweispring21.tk/api/v1/demand/orders", {
+    fetch(`${cloudURL}/demand/api/orders`, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
@@ -96,7 +95,7 @@ function updateOrderDetails(orderIdClicked) {
         return
     }
 
-    order = undefined;
+    var order = undefined;
     for (var i = 0; i < orders.length; i++) {
         if (orders[i].orderId == orderId) {
             order = orders[i];
